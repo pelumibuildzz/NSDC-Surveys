@@ -51,18 +51,6 @@
     font-size: 16px;
   }
   
-  /* Responsive font sizes for larger screens */
-  @media (min-width: 1024px) {
-    body {
-      font-size: 18px;
-    }
-  }
-  
-  @media (min-width: 1280px) {
-    body {
-      font-size: 20px;
-    }
-  }
 }
 
 @layer components {

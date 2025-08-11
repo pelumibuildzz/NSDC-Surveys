@@ -27,7 +27,7 @@ export default function WelcomePage({ onStartSurvey }) {
             NSDC 2025 Industrial Sugar Consumption Survey
           </h1>
           <p className="text-xl text-gray-600">
-            National Sugar Development Council's Annual Survey for 2024
+            National Sugar Development Council&apos;s Annual Survey for 2024
             Reporting Year
           </p>
         </div>
@@ -48,8 +48,8 @@ export default function WelcomePage({ onStartSurvey }) {
               </div>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Welcome to the National Sugar Development Council's (NSDC)
-                  Annual Industrial Sugar Consumption Survey for the 2024
+                  Welcome to the National Sugar Development Council&apos;s
+                  (NSDC) Annual Industrial Sugar Consumption Survey for the 2024
                   reporting year.
                 </p>
                 <p>
@@ -64,8 +64,8 @@ export default function WelcomePage({ onStartSurvey }) {
                   <ul className="space-y-2 ml-4">
                     <li className="flex items-start gap-2">
                       <span className="text-green-600 mt-1">•</span>
-                      Improving our understanding of Nigeria's industrial market
-                      size
+                      Improving our understanding of Nigeria&apos;s industrial
+                      market size
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-600 mt-1">•</span>
@@ -121,8 +121,8 @@ export default function WelcomePage({ onStartSurvey }) {
             </h2>
             <div className="space-y-4 text-gray-700">
               <p>
-                Please complete this survey based on your company's operations
-                for the calendar year:
+                Please complete this survey based on your company&apos;s
+                operations for the calendar year:
                 <span className="font-semibold">
                   {" "}
                   January 1, 2024 – December 31, 2024

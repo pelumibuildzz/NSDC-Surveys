@@ -132,8 +132,8 @@ export default function SurveyForm({
         </h2>
         <p className="text-gray-600 mb-6">
           Thank you for participating in the NSDC 2025 Industrial Sugar
-          Consumption Survey. Your responses will help shape Nigeria's sugar
-          industry development.
+          Consumption Survey. Your responses will help shape Nigeria&apos;s
+          sugar industry development.
         </p>
         <button
           onClick={() => window.location.reload()}

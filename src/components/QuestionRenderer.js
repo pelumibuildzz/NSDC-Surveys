@@ -621,7 +621,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
       default:
         return (
           <div className="text-gray-500 italic">
-            Question type "{question.type}" not supported
+            Question type &quot;{question.type}&quot; not supported
           </div>
         );
     }

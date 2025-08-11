@@ -1,0 +1,460 @@
+{
+  "survey": {
+    "id": "nsdc-sugar-survey-2025",
+    "title": "NSDC 2025 Industrial Sugar Consumption Survey",
+    "description": "National Sugar Development Council's Annual Industrial Sugar Consumption Survey for the 2024 reporting year",
+    "reportingPeriod": "January 1, 2024 – December 31, 2024",
+    "confidentialityNotice": "All individual company responses will be treated with the utmost confidentiality and will only be used in aggregated, anonymized form for statistical analysis and reporting.",
+    "instructions": "Please complete this survey based on your company's operations for the calendar year: January 1, 2024 – December 31, 2024, unless otherwise specified. Please provide data in Metric Tons (MT) for volumes and Nigerian Naira (₦) for values.",
+    "sections": [
+      {
+        "id": "section1",
+        "title": "Company Profile",
+        "questions": [
+          {
+            "id": "companyName",
+            "type": "text",
+            "label": "Company Name",
+            "placeholder": "Enter company name",
+            "required": false,
+            "note": "Optional, for internal tracking. Will be kept confidential"
+          },
+          {
+            "id": "primaryIndustry",
+            "type": "radio",
+            "label": "Primary Industry Sector",
+            "required": true,
+            "note": "Select the single most relevant primary sector",
+            "options": [
+              { "value": "bakery-confectionery", "label": "Bakery & Confectionery" },
+              { "value": "non-alcoholic-beverages", "label": "Non-Alcoholic Beverages" },
+              { "value": "dairy-frozen-desserts", "label": "Dairy & Frozen Desserts" },
+              { "value": "processed-canned-foods", "label": "Processed & Canned Foods" },
+              { "value": "brewing-alcoholic", "label": "Brewing & Other Alcoholic Beverages" },
+              { "value": "pharmaceuticals", "label": "Pharmaceuticals" },
+              { "value": "personal-care-cosmetics", "label": "Personal Care & Cosmetics" },
+              { "value": "chemical-industrial", "label": "Chemical & Industrial Products" },
+              { "value": "hospitality-food-service", "label": "Hospitality & Food Service" },
+              { "value": "animal-feed", "label": "Animal Feed" },
+              { "value": "biofuel-industrial-alcohol", "label": "Biofuel & Industrial Alcohol" },
+              { "value": "others", "label": "Others", "hasTextField": true, "textFieldPlaceholder": "Please specify" }
+            ]
+          },
+          {
+            "id": "primaryLocation",
+            "type": "select",
+            "label": "Location (State) of Primary Production Facility(ies)",
+            "required": true,
+            "options": [
+              { "value": "abia", "label": "Abia" },
+              { "value": "adamawa", "label": "Adamawa" },
+              { "value": "akwa-ibom", "label": "Akwa Ibom" },
+              { "value": "anambra", "label": "Anambra" },
+              { "value": "bauchi", "label": "Bauchi" },
+              { "value": "bayelsa", "label": "Bayelsa" },
+              { "value": "benue", "label": "Benue" },
+              { "value": "borno", "label": "Borno" },
+              { "value": "cross-river", "label": "Cross River" },
+              { "value": "delta", "label": "Delta" },
+              { "value": "ebonyi", "label": "Ebonyi" },
+              { "value": "edo", "label": "Edo" },
+              { "value": "ekiti", "label": "Ekiti" },
+              { "value": "enugu", "label": "Enugu" },
+              { "value": "fct", "label": "Federal Capital Territory (FCT)" },
+              { "value": "gombe", "label": "Gombe" },
+              { "value": "imo", "label": "Imo" },
+              { "value": "jigawa", "label": "Jigawa" },
+              { "value": "kaduna", "label": "Kaduna" },
+              { "value": "kano", "label": "Kano" },
+              { "value": "katsina", "label": "Katsina" },
+              { "value": "kebbi", "label": "Kebbi" },
+              { "value": "kogi", "label": "Kogi" },
+              { "value": "kwara", "label": "Kwara" },
+              { "value": "lagos", "label": "Lagos" },
+              { "value": "nasarawa", "label": "Nasarawa" },
+              { "value": "niger", "label": "Niger" },
+              { "value": "ogun", "label": "Ogun" },
+              { "value": "ondo", "label": "Ondo" },
+              { "value": "osun", "label": "Osun" },
+              { "value": "oyo", "label": "Oyo" },
+              { "value": "plateau", "label": "Plateau" },
+              { "value": "rivers", "label": "Rivers" },
+              { "value": "sokoto", "label": "Sokoto" },
+              { "value": "taraba", "label": "Taraba" },
+              { "value": "yobe", "label": "Yobe" },
+              { "value": "zamfara", "label": "Zamfara" }
+            ]
+          },
+          {
+            "id": "annualRevenue",
+            "type": "radio",
+            "label": "Estimated Annual Revenue (2024)",
+            "required": true,
+            "options": [
+              { "value": "below-100m", "label": "Below ₦100 Million" },
+              { "value": "100m-500m", "label": "₦100 Million - ₦500 Million" },
+              { "value": "501m-1b", "label": "₦501 Million - ₦1 Billion" },
+              { "value": "1b-5b", "label": "₦1 Billion - ₦5 Billion" },
+              { "value": "5b-10b", "label": "₦5 Billion - ₦10 Billion" },
+              { "value": "above-10b", "label": "Above ₦10 Billion" }
+            ]
+          },
+          {
+            "id": "employees",
+            "type": "radio",
+            "label": "Number of Employees",
+            "required": true,
+            "options": [
+              { "value": "1-50", "label": "1 - 50" },
+              { "value": "51-250", "label": "51 - 250" },
+              { "value": "251-1000", "label": "251 - 1,000" },
+              { "value": "1001-5000", "label": "1,001 - 5,000" },
+              { "value": "over-5000", "label": "Over 5,000" }
+            ]
+          },
+          {
+            "id": "procurementMethod",
+            "type": "radio",
+            "label": "Primary Method for Procuring Sugar",
+            "required": true,
+            "options": [
+              { "value": "direct-domestic", "label": "Direct from domestic refiners/mills" },
+              { "value": "international-suppliers", "label": "Through international suppliers/traders" },
+              { "value": "local-distributors", "label": "From local distributors/importers" },
+              { "value": "spot-market", "label": "Spot market purchases" },
+              { "value": "mix", "label": "Mix of the above" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section2",
+        "title": "Sugar Consumption Volume & Value (Historical)",
+        "questions": [
+          {
+            "id": "historicalConsumption",
+            "type": "table",
+            "label": "Total sugar consumption data for the past three calendar years",
+            "required": true,
+            "columns": [
+              { "key": "year", "label": "Year", "type": "text", "readonly": true },
+              { "key": "volume", "label": "Total Volume Consumed (Metric Tons)", "type": "number", "placeholder": "0" },
+              { "key": "cost", "label": "Estimated Total Cost of Sugar Procured (in ₦ Million)", "type": "number", "placeholder": "0" }
+            ],
+            "rows": [
+              { "year": "2024" },
+              { "year": "2023" },
+              { "year": "2022" }
+            ]
+          },
+          {
+            "id": "sugarTypeConsumption",
+            "type": "table",
+            "label": "Volume (MT) consumed in 2024 for each category",
+            "required": true,
+            "columns": [
+              { "key": "sugarType", "label": "Sugar Type", "type": "text", "readonly": true },
+              { "key": "granulated", "label": "Granulated", "type": "number", "placeholder": "0" },
+              { "key": "powdered", "label": "Powdered", "type": "number", "placeholder": "0" },
+              { "key": "syrup", "label": "Syrup/Liquid", "type": "number", "placeholder": "0" },
+              { "key": "other", "label": "Other Forms", "type": "number", "placeholder": "0" }
+            ],
+            "rows": [
+              { "sugarType": "White Sugar" },
+              { "sugarType": "Brown Sugar" },
+              { "sugarType": "Liquid Sugar" },
+              { "sugarType": "Other" }
+            ]
+          },
+          {
+            "id": "endProductBreakdown",
+            "type": "repeatable",
+            "label": "Breakdown of Sugar Consumption by Primary End Product/Application",
+            "description": "List the top 3-5 product categories where sugar is primarily used in your operations",
+            "required": true,
+            "maxItems": 5,
+            "fields": [
+              {
+                "key": "productCategory",
+                "label": "Product Category",
+                "type": "text",
+                "required": true,
+                "placeholder": "e.g., Soft Drinks, Baked Goods"
+              },
+              {
+                "key": "volume",
+                "label": "Volume (MT)",
+                "type": "number",
+                "required": true,
+                "placeholder": "0"
+              }
+            ]
+          },
+          {
+            "id": "rawMaterialSource",
+            "type": "percentage",
+            "label": "Breakdown by Raw Material Source",
+            "description": "Estimate the percentage of your total 2024 sugar volume derived from the following sources (Total should be 100%)",
+            "required": true,
+            "fields": [
+              { "key": "sugarcane", "label": "Sugarcane", "placeholder": "0" },
+              { "key": "sugarBeet", "label": "Sugar Beet", "placeholder": "0" },
+              { "key": "dontKnow", "label": "Don't Know", "placeholder": "0" }
+            ]
+          },
+          {
+            "id": "originBreakdown",
+            "type": "group",
+            "label": "Breakdown by Origin",
+            "description": "Provide the approximate volume (MT) from your 2024 total",
+            "required": true,
+            "fields": [
+              {
+                "key": "domestic",
+                "label": "Domestically Produced Sugar (from Nigerian refineries/mills)",
+                "type": "number",
+                "placeholder": "0",
+                "unit": "MT"
+              },
+              {
+                "key": "imported",
+                "label": "Imported Sugar",
+                "type": "number",
+                "placeholder": "0",
+                "unit": "MT"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section3",
+        "title": "Sugar Alternatives and Sweeteners",
+        "questions": [
+          {
+            "id": "usesSugarAlternatives",
+            "type": "radio",
+            "label": "Does your company use sugar alternatives (e.g., HFCS, Stevia, Aspartame)?",
+            "required": true,
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No", "note": "If No, skip to Section 5" }
+            ],
+            "conditional": true
+          },
+          {
+            "id": "alternativeTypes",
+            "type": "checkbox",
+            "label": "Which types of sugar alternatives do you use?",
+            "description": "Select all that apply",
+            "required": true,
+            "dependsOn": { "usesSugarAlternatives": "yes" },
+            "options": [
+              { "value": "hfcs", "label": "High-Fructose Corn Syrup (HFCS)" },
+              { "value": "stevia", "label": "Stevia" },
+              { "value": "polyols", "label": "Polyols (Sorbitol, Xylitol, Erythritol)" },
+              { "value": "aspartame", "label": "Aspartame" },
+              { "value": "sucralose", "label": "Sucralose" },
+              { "value": "allulose", "label": "Allulose" },
+              { "value": "other", "label": "Other", "hasTextField": true, "textFieldPlaceholder": "Please specify" }
+            ]
+          },
+          {
+            "id": "alternativeReasons",
+            "type": "checkbox",
+            "label": "Primary reasons for using sugar alternatives?",
+            "description": "Select top 3",
+            "required": true,
+            "maxSelections": 3,
+            "dependsOn": { "usesSugarAlternatives": "yes" },
+            "options": [
+              { "value": "cost", "label": "Cost compared to sugar" },
+              { "value": "consumer-demand", "label": "Consumer demand for \"low sugar\"/\"sugar-free\" products" },
+              { "value": "health-profile", "label": "To improve health/nutritional profile of products" },
+              { "value": "regulations", "label": "Existing or anticipated sugar taxes/regulations" },
+              { "value": "functional-properties", "label": "Specific functional properties (e.g., texture, stability)" },
+              { "value": "supply-instability", "label": "Sugar supply chain instability" }
+            ]
+          },
+          {
+            "id": "alternativesVolume",
+            "type": "table",
+            "label": "Total volume of sugar alternatives consumed",
+            "required": true,
+            "dependsOn": { "usesSugarAlternatives": "yes" },
+            "columns": [
+              { "key": "year", "label": "Year", "type": "text", "readonly": true },
+              { "key": "volume", "label": "Total Volume of All Alternatives Combined (MT)", "type": "number", "placeholder": "0" }
+            ],
+            "rows": [
+              { "year": "2024" },
+              { "year": "2023" },
+              { "year": "2022" }
+            ]
+          },
+          {
+            "id": "futureAlternativeIntentions",
+            "type": "radio",
+            "label": "What are your company's future intentions regarding the use of sugar alternatives over the next 1-3 years?",
+            "required": true,
+            "options": [
+              { "value": "significantly-increase", "label": "Significantly increase usage" },
+              { "value": "slightly-increase", "label": "Slightly increase usage" },
+              { "value": "maintain", "label": "Maintain current usage levels" },
+              { "value": "slightly-decrease", "label": "Slightly decrease usage" },
+              { "value": "significantly-decrease", "label": "Significantly decrease usage" },
+              { "value": "no-plan", "label": "Do not plan to use (if currently not using)" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section4",
+        "title": "Consumption Drivers & Market Factors",
+        "questions": [
+          {
+            "id": "impactFactors",
+            "type": "rating-table",
+            "label": "Please rate the impact of the following factors on your sugar consumption in 2024",
+            "description": "1 = No Impact, 5 = Significant Impact",
+            "required": true,
+            "scale": {
+              "min": 1,
+              "max": 5,
+              "labels": {
+                "1": "No Impact",
+                "2": "Low Impact",
+                "3": "Moderate Impact",
+                "4": "High Impact",
+                "5": "Significant Impact"
+              },
+              "includeNA": true
+            },
+            "categories": [
+              {
+                "name": "Economic Factors",
+                "factors": [
+                  { "key": "exchange-rate", "label": "Exchange rate fluctuations" },
+                  { "key": "economic-growth", "label": "Overall economic growth" }
+                ]
+              },
+              {
+                "name": "Consumer Trends",
+                "factors": [
+                  { "key": "low-calorie-demand", "label": "Demand for \"low calorie\" products" },
+                  { "key": "natural-ingredients", "label": "Demand for \"natural\" ingredients" }
+                ]
+              },
+              {
+                "name": "Regulatory & Policy Factors",
+                "factors": [
+                  { "key": "import-tariffs", "label": "Import tariffs/levies" },
+                  { "key": "labelling-requirements", "label": "Labelling requirements" }
+                ]
+              },
+              {
+                "name": "Supply Chain Factors",
+                "factors": [
+                  { "key": "sugar-availability", "label": "Availability of sugar in the Nigerian market" },
+                  { "key": "logistical-challenges", "label": "Logistical challenges" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "section5",
+        "title": "Future Outlook & Forecasts",
+        "questions": [
+          {
+            "id": "consumptionForecast",
+            "type": "table",
+            "label": "Company's best forecast for total sugar consumption",
+            "required": true,
+            "columns": [
+              { "key": "year", "label": "Year", "type": "text", "readonly": true },
+              { "key": "forecast", "label": "Forecast Sugar Consumption (MT)", "type": "number", "placeholder": "0" }
+            ],
+            "rows": [
+              { "year": "2025" },
+              { "year": "2026" },
+              { "year": "2027" }
+            ]
+          },
+          {
+            "id": "alternativesFutureChange",
+            "type": "radio",
+            "label": "What is your company's anticipated change in the use of sugar alternatives over the next 3 years?",
+            "required": true,
+            "options": [
+              { "value": "significantly-increase", "label": "Significantly increase" },
+              { "value": "slightly-increase", "label": "Slightly increase" },
+              { "value": "maintain", "label": "Maintain current levels" },
+              { "value": "slightly-decrease", "label": "Slightly decrease" },
+              { "value": "significantly-decrease", "label": "Significantly decrease" }
+            ]
+          },
+          {
+            "id": "plannedProductLaunches",
+            "type": "radio",
+            "label": "Are there any planned new product launches or reformulations in the next 3 years that will significantly impact your sugar usage?",
+            "required": true,
+            "options": [
+              { "value": "increase", "label": "Yes, will increase usage" },
+              { "value": "decrease", "label": "Yes, will decrease usage" },
+              { "value": "no", "label": "No" }
+            ]
+          },
+          {
+            "id": "biggestChallenge",
+            "type": "textarea",
+            "label": "What do you anticipate will be the single biggest CHALLENGE for your company regarding sugar sourcing and usage in the next 3 years?",
+            "required": true,
+            "placeholder": "Describe the main challenge..."
+          },
+          {
+            "id": "biggestOpportunity",
+            "type": "textarea",
+            "label": "What do you anticipate will be the single biggest OPPORTUNITY for your company regarding sugar sourcing and usage in the next 3 years?",
+            "required": true,
+            "placeholder": "Describe the main opportunity..."
+          },
+          {
+            "id": "topMeasures",
+            "type": "textarea",
+            "label": "What are the top three measures you would like to see implemented to improve the availability and price of sugar and other sweeteners in Nigeria?",
+            "required": true,
+            "placeholder": "List the top three measures..."
+          }
+        ]
+      },
+      {
+        "id": "section6",
+        "title": "Survey Feedback",
+        "questions": [
+          {
+            "id": "surveyDifficulty",
+            "type": "radio",
+            "label": "How easy or difficult was it to complete this survey?",
+            "required": true,
+            "options": [
+              { "value": "very-easy", "label": "Very Easy" },
+              { "value": "easy", "label": "Easy" },
+              { "value": "neutral", "label": "Neutral" },
+              { "value": "difficult", "label": "Difficult" },
+              { "value": "very-difficult", "label": "Very Difficult" }
+            ]
+          },
+          {
+            "id": "surveyImprovements",
+            "type": "textarea",
+            "label": "Do you have any suggestions for improving this survey in the future?",
+            "required": false,
+            "placeholder": "Your suggestions for improvement..."
+          }
+        ]
+      }
+    ]
+  }
+}

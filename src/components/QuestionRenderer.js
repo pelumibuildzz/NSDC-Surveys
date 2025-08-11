@@ -213,7 +213,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
           <select
             value={value || ""}
             onChange={(e) => handleInputChange(e.target.value)}
-            className={`form-input ${
+            className={`form-input md:h-auto h-14 ${
               error
                 ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                 : ""

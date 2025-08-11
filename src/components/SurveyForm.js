@@ -72,6 +72,21 @@ export default function SurveyForm({
     return Object.keys(newErrors).length === 0;
   };
 
+  const isSectionValid = () => {
+    const sectionData = formData[currentSection] || {};
+
+    return currentSectionData.questions.every((question) => {
+      if (!question.required) return true;
+
+      const value = sectionData[question.id];
+      return (
+        value &&
+        (typeof value !== "string" || value.trim() !== "") &&
+        (!Array.isArray(value) || value.length > 0)
+      );
+    });
+  };
+
   const handleNext = () => {
     if (validateSection()) {
       onSectionComplete(currentSection);
@@ -204,7 +219,7 @@ export default function SurveyForm({
           {isLastSection ? (
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isSectionValid()}
               className="btn-primary"
             >
               {isSubmitting ? (
@@ -220,7 +235,11 @@ export default function SurveyForm({
               )}
             </button>
           ) : (
-            <button onClick={handleNext} className="btn-primary">
+            <button
+              onClick={handleNext}
+              disabled={!isSectionValid()}
+              className="btn-primary"
+            >
               Next
               <FontAwesomeIcon icon={faChevronRight} />
             </button>

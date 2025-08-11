@@ -36,18 +36,6 @@ export default function SectionNavigation({
             {sections.find((s) => s.id === currentSection)?.title}
           </div>
         </div>
-        <div className="mt-2 bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{
-              width: `${
-                ((sections.findIndex((s) => s.id === currentSection) + 1) /
-                  sections.length) *
-                100
-              }%`,
-            }}
-          />
-        </div>
       </div>
     );
   }

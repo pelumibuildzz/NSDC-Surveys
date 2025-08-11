@@ -1,26 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Primary Colors */
+  --color-primary: #1e40af;
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1e3a8a;
+  
+  /* Secondary Colors */
+  --color-secondary: #059669;
+  --color-secondary-light: #10b981;
+  --color-secondary-dark: #047857;
+  
+  /* Accent Colors */
+  --color-accent: #f59e0b;
+  --color-accent-light: #fbbf24;
+  --color-accent-dark: #d97706;
+  
+  /* NSDC Brand Colors */
+  --color-nsdc-green: #00962E;
+  --color-nsdc-red: #FF0001;
+  
+  /* Neutral Colors */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  
+  /* Status Colors */
+  --color-success: #059669;
+  --color-warning: #f59e0b;
+  --color-error: #dc2626;
+  --color-info: #0ea5e9;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  body {
+    background-color: rgb(249 250 251);
+    color: rgb(17 24 39);
+    font-size: 16px;
+  }
+  
+  /* Responsive font sizes for larger screens */
+  @media (min-width: 1024px) {
+    body {
+      font-size: 18px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    body {
+      font-size: 20px;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .btn-primary {
+    @apply bg-blue-700 hover:bg-blue-800 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center gap-2;
+  }
+  
+  .btn-outline {
+    @apply border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center gap-2;
+  }
+  
+  .form-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white;
+    font-size: 1em;
+  }
+  
+  /* Make form inputs larger on bigger screens */
+  @media (min-width: 1024px) {
+    .form-input {
+      padding: 1rem 1.25rem;
+      font-size: 1.1em;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .form-input {
+      padding: 1.125rem 1.5rem;
+      font-size: 1.125em;
+    }
+  }
+  
+  .form-label {
+    @apply block font-semibold text-gray-800 mb-3;
+    font-size: 1.1em;
+  }
+  
+  /* Make question labels larger and bolder on bigger screens */
+  @media (min-width: 1024px) {
+    .form-label {
+      font-size: 1.2em;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .form-label {
+      font-size: 1.3em;
+    }
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  }
+  
+  /* Make cards more spacious on larger screens */
+  @media (min-width: 1024px) {
+    .card {
+      padding: 2rem;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .card {
+      padding: 2.5rem;
+    }
+  }
+  
+  .section-nav-item {
+    @apply flex items-center gap-3 p-3 rounded-lg transition-colors duration-200 cursor-pointer;
+  }
+  
+  .section-nav-item.active {
+    @apply bg-blue-50 text-blue-700 border-l-4 border-blue-700;
+  }
+  
+  .section-nav-item.completed {
+    @apply bg-green-50 text-green-700 border-l-4 border-green-500;
+  }
+  
+  .section-nav-item:hover:not(.active) {
+    @apply bg-gray-50;
+  }
 }
+

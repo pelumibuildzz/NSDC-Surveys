@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/submit/route.js": {
+      "runtime": "nodejs20.x"
+    }
+  }
+}

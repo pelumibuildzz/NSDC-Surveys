@@ -22,6 +22,16 @@ export async function POST(request) {
       sheetName: "Industrial Sugar Consumption Survey",
     };
 
+    // Validate and clean the private key
+    if (GOOGLE_SHEETS_CONFIG.privateKey) {
+      // Ensure the private key has proper formatting
+      let cleanKey = GOOGLE_SHEETS_CONFIG.privateKey.trim();
+      if (!cleanKey.startsWith("-----BEGIN")) {
+        cleanKey = `-----BEGIN PRIVATE KEY-----\n${cleanKey}\n-----END PRIVATE KEY-----`;
+      }
+      GOOGLE_SHEETS_CONFIG.privateKey = cleanKey;
+    }
+
     // Check if Google Sheets is configured
     if (
       !GOOGLE_SHEETS_CONFIG.spreadsheetId ||
@@ -62,14 +72,34 @@ export async function POST(request) {
 // Google Sheets API implementation
 async function submitToGoogleSheets(data, config) {
   try {
-    // Create Google Auth client
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: config.serviceAccountEmail,
-        private_key: config.privateKey,
-      },
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
+    // Create Google Auth client with improved error handling
+    let auth;
+    try {
+      // Try using service account JSON if available
+      if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+        const serviceAccount = JSON.parse(
+          process.env.GOOGLE_SERVICE_ACCOUNT_JSON
+        );
+        auth = new google.auth.GoogleAuth({
+          credentials: serviceAccount,
+          scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+        });
+      } else {
+        // Fallback to individual environment variables
+        auth = new google.auth.GoogleAuth({
+          credentials: {
+            client_email: config.serviceAccountEmail,
+            private_key: config.privateKey,
+          },
+          scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+        });
+      }
+    } catch (authError) {
+      console.error("Google Auth creation failed:", authError);
+      throw new Error(
+        `Authentication failed: ${authError.message}. This might be due to an incompatible private key format. Please regenerate your Google service account key.`
+      );
+    }
 
     const sheets = google.sheets({ version: "v4", auth });
 

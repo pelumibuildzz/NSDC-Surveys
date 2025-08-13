@@ -161,14 +161,14 @@ export default function SurveyForm({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 lg:max-w-[] max-w-[90vw] ">
       {/* Section Header */}
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
             {currentSectionData.title}
           </h2>
-          <div className="text-sm text-gray-500">
+          <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap ml-4">
             Section {currentSectionIndex + 1} of {sections.length}
           </div>
         </div>
@@ -183,7 +183,7 @@ export default function SurveyForm({
       </div>
 
       {/* Questions */}
-      <div className="card space-y-8">
+      <div className="card space-y-6 sm:space-y-8">
         {currentSectionData.questions.map((question) => (
           <QuestionRenderer
             key={question.id}
@@ -197,20 +197,21 @@ export default function SurveyForm({
 
       {/* Navigation */}
       <div className="card">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <button
             onClick={handlePrevious}
             disabled={isFirstSection}
-            className="btn-secondary"
+            className="btn-secondary flex-shrink-0"
           >
             <FontAwesomeIcon icon={faChevronLeft} />
-            Previous
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
           </button>
 
           {submitStatus === "error" && (
-            <div className="flex items-center gap-2 text-red-600">
+            <div className="flex items-center gap-2 text-red-600 text-center">
               <FontAwesomeIcon icon={faExclamationTriangle} />
-              <span className="text-sm">
+              <span className="text-xs sm:text-sm">
                 Failed to submit. Please try again.
               </span>
             </div>
@@ -220,16 +221,18 @@ export default function SurveyForm({
             <button
               onClick={handleSubmit}
               disabled={isSubmitting || !isSectionValid()}
-              className="btn-primary"
+              className="btn-primary flex-shrink-0"
             >
               {isSubmitting ? (
                 <>
                   <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
-                  Submitting...
+                  <span className="hidden sm:inline">Submitting...</span>
+                  <span className="sm:hidden">Submitting</span>
                 </>
               ) : (
                 <>
-                  Submit Survey
+                  <span className="hidden sm:inline">Submit Survey</span>
+                  <span className="sm:hidden">Submit</span>
                   <FontAwesomeIcon icon={faPaperPlane} />
                 </>
               )}
@@ -238,9 +241,10 @@ export default function SurveyForm({
             <button
               onClick={handleNext}
               disabled={!isSectionValid()}
-              className="btn-primary"
+              className="btn-primary flex-shrink-0"
             >
-              Next
+              <span className="hidden sm:inline">Next</span>
+              <span className="sm:hidden">Next</span>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           )}

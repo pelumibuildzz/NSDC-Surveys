@@ -75,7 +75,11 @@ export default function Home() {
             </div>
             <button
               onClick={() => setCurrentView("welcome")}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className={
+                isMobile
+                  ? "text-sm text-nsdc-green absolute top-26 left-4"
+                  : "text-sm text-nsdc-green hover:text-gray-900"
+              }
             >
               Back to Welcome
             </button>

@@ -71,7 +71,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
           <div className="space-y-3">
             {question.options.map((option) => (
               <div key={option.value} className="space-y-2">
-                <label className="flex items-start gap-3 cursor-pointer">
+                <label className="flex items-start gap-3 cursor-pointer p-2 -m-2 rounded hover:bg-gray-50">
                   <input
                     type="radio"
                     name={question.id}
@@ -91,7 +91,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
                         handleInputChange(e.target.value);
                       }
                     }}
-                    className="mt-1 text-blue-600 focus:ring-blue-500"
+                    className="mt-1 text-blue-600 focus:ring-blue-500 w-5 h-5"
                   />
                   <span className="text-gray-700">{option.label}</span>
                 </label>
@@ -128,7 +128,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
           <div className="space-y-3">
             {question.options.map((option) => (
               <div key={option.value} className="space-y-2">
-                <label className="flex items-start gap-3 cursor-pointer">
+                <label className="flex items-start gap-3 cursor-pointer p-2 -m-2 rounded hover:bg-gray-50">
                   <input
                     type="checkbox"
                     value={option.value}
@@ -161,7 +161,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
                         );
                       }
                     }}
-                    className="mt-1 text-blue-600 focus:ring-blue-500 rounded"
+                    className="mt-1 text-blue-600 focus:ring-blue-500 rounded w-5 h-5"
                   />
                   <span className="text-gray-700">{option.label}</span>
                 </label>
@@ -524,36 +524,40 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
                             (_, i) => i + 1
                           ).map((rating) => (
                             <td key={rating} className="px-3 py-3 text-center">
-                              <input
-                                type="radio"
-                                name={`${question.id}_${factor.key}`}
-                                value={rating}
-                                checked={value?.[factor.key] === rating}
-                                onChange={(e) =>
-                                  handleInputChange({
-                                    ...value,
-                                    [factor.key]: parseInt(e.target.value),
-                                  })
-                                }
-                                className="text-blue-600 focus:ring-blue-500"
-                              />
+                              <label className="flex justify-center items-center cursor-pointer p-2 rounded hover:bg-gray-100">
+                                <input
+                                  type="radio"
+                                  name={`${question.id}_${factor.key}`}
+                                  value={rating}
+                                  checked={value?.[factor.key] === rating}
+                                  onChange={(e) =>
+                                    handleInputChange({
+                                      ...value,
+                                      [factor.key]: parseInt(e.target.value),
+                                    })
+                                  }
+                                  className="text-blue-600 focus:ring-blue-500 w-5 h-5"
+                                />
+                              </label>
                             </td>
                           ))}
                           {question.scale.includeNA && (
                             <td className="px-3 py-3 text-center">
-                              <input
-                                type="radio"
-                                name={`${question.id}_${factor.key}`}
-                                value="N/A"
-                                checked={value?.[factor.key] === "N/A"}
-                                onChange={(e) =>
-                                  handleInputChange({
-                                    ...value,
-                                    [factor.key]: e.target.value,
-                                  })
-                                }
-                                className="text-blue-600 focus:ring-blue-500"
-                              />
+                              <label className="flex justify-center items-center cursor-pointer p-2 rounded hover:bg-gray-100">
+                                <input
+                                  type="radio"
+                                  name={`${question.id}_${factor.key}`}
+                                  value="N/A"
+                                  checked={value?.[factor.key] === "N/A"}
+                                  onChange={(e) =>
+                                    handleInputChange({
+                                      ...value,
+                                      [factor.key]: e.target.value,
+                                    })
+                                  }
+                                  className="text-blue-600 focus:ring-blue-500 w-5 h-5"
+                                />
+                              </label>
                             </td>
                           )}
                         </tr>
@@ -576,7 +580,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
                   {[1, 2, 3, 4, 5].map((rating) => (
                     <label
                       key={rating}
-                      className="flex flex-col items-center gap-1 cursor-pointer"
+                      className="flex flex-col items-center gap-1 cursor-pointer p-2 rounded hover:bg-gray-100"
                     >
                       <input
                         type="radio"
@@ -589,14 +593,14 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
                             [item.key]: parseInt(e.target.value),
                           })
                         }
-                        className="text-blue-600 focus:ring-blue-500"
+                        className="text-blue-600 focus:ring-blue-500 w-5 h-5"
                       />
                       <span className="text-[17px] text-gray-600">
                         {rating}
                       </span>
                     </label>
                   ))}
-                  <label className="flex flex-col items-center gap-1 cursor-pointer">
+                  <label className="flex flex-col items-center gap-1 cursor-pointer p-2 rounded hover:bg-gray-100">
                     <input
                       type="radio"
                       name={`${question.id}_${item.key}`}
@@ -608,7 +612,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
                           [item.key]: e.target.value,
                         })
                       }
-                      className="text-blue-600 focus:ring-blue-500"
+                      className="text-blue-600 focus:ring-blue-500 w-5 h-5"
                     />
                     <span className="text-[17px] text-gray-600">N/A</span>
                   </label>

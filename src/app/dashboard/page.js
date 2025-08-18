@@ -86,6 +86,19 @@ export default function Dashboard() {
       domesticVsImported: processDomesticImportedData(data),
       alternativeSweeteners: processAlternativeSweetenersData(data),
       industryDistribution: processIndustryDistributionData(data),
+      // New charts
+      revenueDistribution: processRevenueDistributionData(data),
+      employeeDistribution: processEmployeeDistributionData(data),
+      procurementMethodDistribution:
+        processProcurementMethodDistributionData(data),
+      historicalCosts: processHistoricalCostsData(data),
+      sugarConsumptionByCompany: processSugarConsumptionByCompanyData(data),
+      alternativeSweetenersByCompany:
+        processAlternativeSweetenersByCompanyData(data),
+      forecastsByCompany: processForecastsByCompanyData(data),
+      sugarTypesDetailed: processSugarTypesDetailedData(data),
+      alternativesUsage: processAlternativesUsageData(data),
+      surveyDifficulty: processSurveyDifficultyData(data),
     };
 
     console.log("Processed sugar type data:", processed.sugarTypeBreakdown);
@@ -439,6 +452,390 @@ export default function Dashboard() {
     };
   };
 
+  // New processing functions for additional charts
+  const processRevenueDistributionData = (data) => {
+    const revenueCount = {};
+    data.forEach((row) => {
+      const revenue = row["Annual Revenue"] || "Unknown";
+      revenueCount[revenue] = (revenueCount[revenue] || 0) + 1;
+    });
+
+    const revenueLabels = {
+      "under-50m": "Under ₦50M",
+      "50m-100m": "₦50M - ₦100M",
+      "101m-250m": "₦101M - ₦250M",
+      "251m-500m": "₦251M - ₦500M",
+      "501m-1b": "₦501M - ₦1B",
+      "1b-5b": "₦1B - ₦5B",
+      "over-5b": "Over ₦5B",
+    };
+
+    const labels = Object.keys(revenueCount).map(
+      (key) => revenueLabels[key] || key
+    );
+    const values = Object.values(revenueCount);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "Number of Companies",
+          data: values,
+          backgroundColor: "rgba(34, 197, 94, 0.8)",
+          borderColor: "rgba(34, 197, 94, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  const processEmployeeDistributionData = (data) => {
+    const employeeCount = {};
+    data.forEach((row) => {
+      const employees = row["Number of Employees"] || "Unknown";
+      employeeCount[employees] = (employeeCount[employees] || 0) + 1;
+    });
+
+    const employeeLabels = {
+      "under-50": "Under 50",
+      "51-100": "51-100",
+      "101-250": "101-250",
+      "251-1000": "251-1000",
+      "1001-5000": "1001-5000",
+      "over-5000": "Over 5000",
+    };
+
+    const labels = Object.keys(employeeCount).map(
+      (key) => employeeLabels[key] || key
+    );
+    const values = Object.values(employeeCount);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "Number of Companies",
+          data: values,
+          backgroundColor: "rgba(59, 130, 246, 0.8)",
+          borderColor: "rgba(59, 130, 246, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  const processProcurementMethodDistributionData = (data) => {
+    const methodCount = {};
+    data.forEach((row) => {
+      const method = row["Primary Procurement Method"] || "Unknown";
+      methodCount[method] = (methodCount[method] || 0) + 1;
+    });
+
+    const methodLabels = {
+      "direct-from-producers": "Direct from Producers",
+      "local-distributors": "Local Distributors",
+      "international-importers": "International Importers",
+      "spot-market": "Spot Market",
+      "long-term-contracts": "Long-term Contracts",
+      "government-allocation": "Government Allocation",
+      others: "Others",
+    };
+
+    const labels = Object.keys(methodCount).map(
+      (key) => methodLabels[key] || key
+    );
+    const values = Object.values(methodCount);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "Number of Companies",
+          data: values,
+          backgroundColor: "rgba(168, 85, 247, 0.8)",
+          borderColor: "rgba(168, 85, 247, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  const processHistoricalCostsData = (data) => {
+    const years = ["2022", "2023", "2024"];
+    const costData = years.map((year) => {
+      const total = data.reduce((sum, row) => {
+        const cost = parseFloat(
+          row[`${year} Historical Cost (₦ Million)`] || 0
+        );
+        return sum + cost;
+      }, 0);
+      return total;
+    });
+
+    return {
+      labels: years,
+      datasets: [
+        {
+          label: "Total Sugar Cost (₦ Million)",
+          data: costData,
+          borderColor: "rgb(239, 68, 68)",
+          backgroundColor: "rgba(239, 68, 68, 0.2)",
+          tension: 0.1,
+        },
+      ],
+    };
+  };
+
+  const processSugarConsumptionByCompanyData = (data) => {
+    const companies = [
+      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
+    ].slice(0, 8);
+    const years = ["2022", "2023", "2024"];
+
+    const datasets = years.map((year, index) => {
+      const colors = [
+        "rgba(255, 99, 132, 0.8)",
+        "rgba(54, 162, 235, 0.8)",
+        "rgba(255, 205, 86, 0.8)",
+      ];
+      const companyData = companies.map((company) => {
+        const companyRows = data.filter(
+          (row) => (row["Company Name"] || "Unknown") === company
+        );
+        const total = companyRows.reduce((sum, row) => {
+          const consumption = parseFloat(
+            row[`${year} Historical Volume (MT)`] || 0
+          );
+          return sum + consumption;
+        }, 0);
+        return total;
+      });
+
+      return {
+        label: year,
+        data: companyData,
+        backgroundColor: colors[index],
+        borderColor: colors[index],
+        borderWidth: 1,
+      };
+    });
+
+    return {
+      labels: companies,
+      datasets,
+    };
+  };
+
+  const processAlternativeSweetenersByCompanyData = (data) => {
+    const companies = [
+      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
+    ].slice(0, 8);
+    const years = ["2022", "2023", "2024"];
+
+    const datasets = years.map((year, index) => {
+      const colors = [
+        "rgba(255, 99, 132, 0.8)",
+        "rgba(54, 162, 235, 0.8)",
+        "rgba(255, 205, 86, 0.8)",
+      ];
+      const companyData = companies.map((company) => {
+        const companyRows = data.filter(
+          (row) => (row["Company Name"] || "Unknown") === company
+        );
+        const total = companyRows.reduce((sum, row) => {
+          const volume = parseFloat(
+            row[`${year} Alternative Volume (MT)`] || 0
+          );
+          return sum + volume;
+        }, 0);
+        return total;
+      });
+
+      return {
+        label: year,
+        data: companyData,
+        backgroundColor: colors[index],
+        borderColor: colors[index],
+        borderWidth: 1,
+      };
+    });
+
+    return {
+      labels: companies,
+      datasets,
+    };
+  };
+
+  const processForecastsByCompanyData = (data) => {
+    const companies = [
+      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
+    ].slice(0, 8);
+    const years = ["2025", "2026", "2027"];
+
+    const datasets = years.map((year, index) => {
+      const colors = [
+        "rgba(168, 85, 247, 0.8)",
+        "rgba(34, 197, 94, 0.8)",
+        "rgba(249, 115, 22, 0.8)",
+      ];
+      const companyData = companies.map((company) => {
+        const companyRows = data.filter(
+          (row) => (row["Company Name"] || "Unknown") === company
+        );
+        const total = companyRows.reduce((sum, row) => {
+          const forecast = parseFloat(row[`${year} Forecast (MT)`] || 0);
+          return sum + forecast;
+        }, 0);
+        return total;
+      });
+
+      return {
+        label: year,
+        data: companyData,
+        backgroundColor: colors[index],
+        borderColor: colors[index],
+        borderWidth: 1,
+      };
+    });
+
+    return {
+      labels: companies,
+      datasets,
+    };
+  };
+
+  const processSugarTypesDetailedData = (data) => {
+    const sugarTypes = [
+      "White Sugar (MT)",
+      "Brown Sugar (MT)",
+      "Liquid Sugar (MT)",
+      "Other (MT)",
+    ];
+    const typeLabels = ["White Sugar", "Brown Sugar", "Liquid Sugar", "Other"];
+
+    const datasets = sugarTypes.map((type, index) => {
+      const colors = [
+        "rgba(255, 99, 132, 0.8)",
+        "rgba(54, 162, 235, 0.8)",
+        "rgba(255, 205, 86, 0.8)",
+        "rgba(75, 192, 192, 0.8)",
+      ];
+
+      const forms = {};
+      data.forEach((row) => {
+        const value = row[type];
+        if (value && typeof value === "string" && value.startsWith("{")) {
+          try {
+            const cleanValue = value.replace(/[{}]/g, "").trim();
+            if (cleanValue) {
+              const pairs = cleanValue.split(",");
+              pairs.forEach((pair) => {
+                const [key, val] = pair.split(":").map((s) => s.trim());
+                const numVal = parseFloat(val);
+                if (!isNaN(numVal)) {
+                  forms[key] = (forms[key] || 0) + numVal;
+                }
+              });
+            }
+          } catch (e) {
+            // ignore parsing errors
+          }
+        }
+      });
+
+      return {
+        label: typeLabels[index],
+        data: Object.values(forms),
+        backgroundColor: colors[index],
+        borderColor: colors[index],
+        borderWidth: 1,
+      };
+    });
+
+    // Get all unique forms
+    const allForms = new Set();
+    data.forEach((row) => {
+      sugarTypes.forEach((type) => {
+        const value = row[type];
+        if (value && typeof value === "string" && value.startsWith("{")) {
+          try {
+            const cleanValue = value.replace(/[{}]/g, "").trim();
+            if (cleanValue) {
+              const pairs = cleanValue.split(",");
+              pairs.forEach((pair) => {
+                const [key] = pair.split(":").map((s) => s.trim());
+                allForms.add(key);
+              });
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      });
+    });
+
+    return {
+      labels: Array.from(allForms),
+      datasets,
+    };
+  };
+
+  const processAlternativesUsageData = (data) => {
+    const usesAlternatives = data.filter(
+      (row) => row["Uses Sugar Alternatives"]?.toLowerCase() === "yes"
+    ).length;
+    const doesntUseAlternatives = data.filter(
+      (row) => row["Uses Sugar Alternatives"]?.toLowerCase() === "no"
+    ).length;
+
+    return {
+      labels: ["Uses Alternatives", "Doesn't Use Alternatives"],
+      datasets: [
+        {
+          label: "Number of Companies",
+          data: [usesAlternatives, doesntUseAlternatives],
+          backgroundColor: ["rgba(34, 197, 94, 0.8)", "rgba(239, 68, 68, 0.8)"],
+          borderColor: ["rgba(34, 197, 94, 1)", "rgba(239, 68, 68, 1)"],
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  const processSurveyDifficultyData = (data) => {
+    const difficultyCount = {};
+    data.forEach((row) => {
+      const difficulty = row["Survey Difficulty"] || "Unknown";
+      difficultyCount[difficulty] = (difficultyCount[difficulty] || 0) + 1;
+    });
+
+    const difficultyLabels = {
+      "very-easy": "Very Easy",
+      easy: "Easy",
+      neutral: "Neutral",
+      difficult: "Difficult",
+      "very-difficult": "Very Difficult",
+    };
+
+    const labels = Object.keys(difficultyCount).map(
+      (key) => difficultyLabels[key] || key
+    );
+    const values = Object.values(difficultyCount);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "Number of Responses",
+          data: values,
+          backgroundColor: "rgba(147, 51, 234, 0.8)",
+          borderColor: "rgba(147, 51, 234, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -670,6 +1067,171 @@ export default function Dashboard() {
               <div className="h-64">
                 {chartData.forecasts && (
                   <Line data={chartData.forecasts} options={chartOptions} />
+                )}
+              </div>
+            </section>
+
+            {/* Company Demographics */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Annual Revenue Distribution
+                </h2>
+                <div className="h-64">
+                  {chartData.revenueDistribution && (
+                    <Bar
+                      data={chartData.revenueDistribution}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Employee Count Distribution
+                </h2>
+                <div className="h-64">
+                  {chartData.employeeDistribution && (
+                    <Bar
+                      data={chartData.employeeDistribution}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Procurement Method Distribution
+                </h2>
+                <div className="h-64">
+                  {chartData.procurementMethodDistribution && (
+                    <Bar
+                      data={chartData.procurementMethodDistribution}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+            </div>
+
+            {/* Historical Data with Costs */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Sugar Consumption Trends (2022-2024)
+                </h2>
+                <div className="h-64">
+                  {chartData.sugarConsumption && (
+                    <Line
+                      data={chartData.sugarConsumption}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Historical Sugar Costs (2022-2024)
+                </h2>
+                <div className="h-64">
+                  {chartData.historicalCosts && (
+                    <Line
+                      data={chartData.historicalCosts}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+            </div>
+
+            {/* Company-wise Analysis */}
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Sugar Consumption by Company (2022-2024)
+              </h2>
+              <div className="h-80">
+                {chartData.sugarConsumptionByCompany && (
+                  <Bar
+                    data={chartData.sugarConsumptionByCompany}
+                    options={chartOptions}
+                  />
+                )}
+              </div>
+            </section>
+
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Alternative Sweeteners by Company (2022-2024)
+              </h2>
+              <div className="h-80">
+                {chartData.alternativeSweetenersByCompany && (
+                  <Bar
+                    data={chartData.alternativeSweetenersByCompany}
+                    options={chartOptions}
+                  />
+                )}
+              </div>
+            </section>
+
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Forecasted Consumption by Company (2025-2027)
+              </h2>
+              <div className="h-80">
+                {chartData.forecastsByCompany && (
+                  <Bar
+                    data={chartData.forecastsByCompany}
+                    options={chartOptions}
+                  />
+                )}
+              </div>
+            </section>
+
+            {/* Sugar Types and Alternatives */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Detailed Sugar Types Usage
+                </h2>
+                <div className="h-80">
+                  {chartData.sugarTypesDetailed && (
+                    <Bar
+                      data={chartData.sugarTypesDetailed}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Alternative Sweeteners Usage
+                </h2>
+                <div className="h-64">
+                  {chartData.alternativesUsage && (
+                    <Bar
+                      data={chartData.alternativesUsage}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+            </div>
+
+            {/* Survey Feedback */}
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Survey Completion Difficulty
+              </h2>
+              <div className="h-64">
+                {chartData.surveyDifficulty && (
+                  <Bar
+                    data={chartData.surveyDifficulty}
+                    options={chartOptions}
+                  />
                 )}
               </div>
             </section>

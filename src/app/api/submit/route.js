@@ -307,6 +307,16 @@ async function handleFallbackSubmission(data) {
   console.log("Survey ID:", data.surveyId);
   console.log("Submitted At:", data.submittedAt);
 
+  console.log("\n=== RAW RESPONSES DEBUG ===");
+  Object.entries(data.responses).forEach(([sectionId, sectionData]) => {
+    console.log(`\nSection: ${sectionId}`);
+    Object.entries(sectionData || {}).forEach(([questionId, answer]) => {
+      console.log(`  Question: ${questionId}`);
+      console.log(`  Answer:`, JSON.stringify(answer, null, 4));
+      console.log(`  Type: ${typeof answer}, Array: ${Array.isArray(answer)}`);
+    });
+  });
+
   // Show flattened data structure for preview
   const flattenedData = flattenSurveyData(data.responses, data.submittedAt);
   console.log("\n=== FORMATTED DATA PREVIEW ===");
@@ -379,48 +389,94 @@ function flattenSurveyData(responses, submittedAt) {
       // Handle special cases with custom formatting
       if (questionId === "historicalConsumption" && Array.isArray(answer)) {
         // Each year gets its own columns for volume and cost
-        answer.forEach((row) => {
-          if (row.year) {
-            flattened[`${row.year} Historical Volume (MT)`] = row.volume || "";
-            flattened[`${row.year} Historical Cost (₦ Million)`] =
-              row.cost || "";
+        // Handle both pre-filled row data and user input data
+        answer.forEach((row, index) => {
+          if (row && typeof row === "object") {
+            // Get year from either the row data or predefined years
+            const year =
+              row.year ||
+              (index === 0 ? "2024" : index === 1 ? "2023" : "2022");
+            if (year) {
+              flattened[`${year} Historical Volume (MT)`] = row.volume || "";
+              flattened[`${year} Historical Cost (₦ Million)`] = row.cost || "";
+            }
           }
         });
         return;
       }
 
       if (questionId === "sugarTypeConsumption" && Array.isArray(answer)) {
-        // Each sugar type gets its own column
-        answer.forEach((row) => {
-          if (row.sugarType) {
-            const sugarType = row.sugarType;
-            const totalVolume = (
-              parseFloat(row.granulated || 0) +
-              parseFloat(row.powdered || 0) +
-              parseFloat(row.syrup || 0) +
-              parseFloat(row.other || 0)
-            ).toString();
-            flattened[`${sugarType} (MT)`] = totalVolume;
+        // Each sugar type gets its own column with breakdown of different forms
+        // Handle both pre-filled row data and user input data
+        answer.forEach((row, index) => {
+          if (row && typeof row === "object") {
+            // Get sugar type from either the row data or predefined types
+            const sugarType =
+              row.sugarType ||
+              (index === 0
+                ? "White Sugar"
+                : index === 1
+                ? "Brown Sugar"
+                : index === 2
+                ? "Liquid Sugar"
+                : "Other");
+
+            if (sugarType) {
+              // Create breakdown showing each form with its amount
+              const breakdown = [];
+              if (row.granulated && parseFloat(row.granulated) > 0) {
+                breakdown.push(`granulated: ${row.granulated}`);
+              }
+              if (row.powdered && parseFloat(row.powdered) > 0) {
+                breakdown.push(`powder: ${row.powdered}`);
+              }
+              if (row.syrup && parseFloat(row.syrup) > 0) {
+                breakdown.push(`syrup: ${row.syrup}`);
+              }
+              if (row.other && parseFloat(row.other) > 0) {
+                breakdown.push(`other: ${row.other}`);
+              }
+
+              // Format as {granulated: 2, powder: 3, syrup: 1}
+              const formattedBreakdown =
+                breakdown.length > 0 ? `{${breakdown.join(", ")}}` : "";
+
+              flattened[`${sugarType} (MT)`] = formattedBreakdown;
+            }
           }
         });
         return;
       }
 
       if (questionId === "alternativesVolume" && Array.isArray(answer)) {
-        // Alternative volumes with year prefixes: 2024volume, 2023volume, 2022volume
-        answer.forEach((row) => {
-          if (row.year) {
-            flattened[`${row.year} Alternative Volume (MT)`] = row.volume || "";
+        // Alternative volumes with year prefixes
+        // Handle both pre-filled row data and user input data
+        answer.forEach((row, index) => {
+          if (row && typeof row === "object") {
+            // Get year from either the row data or predefined years
+            const year =
+              row.year ||
+              (index === 0 ? "2024" : index === 1 ? "2023" : "2022");
+            if (year) {
+              flattened[`${year} Alternative Volume (MT)`] = row.volume || "";
+            }
           }
         });
         return;
       }
 
       if (questionId === "consumptionForecast" && Array.isArray(answer)) {
-        // Forecast with year prefixes: 2025forecast, 2026forecast, 2027forecast
-        answer.forEach((row) => {
-          if (row.year) {
-            flattened[`${row.year} Forecast (MT)`] = row.forecast || "";
+        // Forecast with year prefixes
+        // Handle both pre-filled row data and user input data
+        answer.forEach((row, index) => {
+          if (row && typeof row === "object") {
+            // Get year from either the row data or predefined years
+            const year =
+              row.year ||
+              (index === 0 ? "2025" : index === 1 ? "2026" : "2027");
+            if (year) {
+              flattened[`${year} Forecast (MT)`] = row.forecast || "";
+            }
           }
         });
         return;
@@ -522,6 +578,47 @@ function flattenSurveyData(responses, submittedAt) {
         flattened[columnName] = String(answer);
       }
     });
+  });
+
+  // Add default columns for key data points that might be missing due to conditional logic
+  // Alternative volumes (add default empty values if not present)
+  const altVolumeYears = ["2024", "2023", "2022"];
+  altVolumeYears.forEach((year) => {
+    const columnName = `${year} Alternative Volume (MT)`;
+    if (!flattened[columnName]) {
+      flattened[columnName] = "";
+    }
+  });
+
+  // Consumption forecasts (add default empty values if not present)
+  const forecastYears = ["2025", "2026", "2027"];
+  forecastYears.forEach((year) => {
+    const columnName = `${year} Forecast (MT)`;
+    if (!flattened[columnName]) {
+      flattened[columnName] = "";
+    }
+  });
+
+  // Historical consumption (add default empty values if not present)
+  const historicalYears = ["2024", "2023", "2022"];
+  historicalYears.forEach((year) => {
+    const volumeColumn = `${year} Historical Volume (MT)`;
+    const costColumn = `${year} Historical Cost (₦ Million)`;
+    if (!flattened[volumeColumn]) {
+      flattened[volumeColumn] = "";
+    }
+    if (!flattened[costColumn]) {
+      flattened[costColumn] = "";
+    }
+  });
+
+  // Sugar type consumption (add default empty values if not present)
+  const sugarTypes = ["White Sugar", "Brown Sugar", "Liquid Sugar", "Other"];
+  sugarTypes.forEach((sugarType) => {
+    const columnName = `${sugarType} (MT)`;
+    if (!flattened[columnName]) {
+      flattened[columnName] = "";
+    }
   });
 
   return flattened;

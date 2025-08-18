@@ -5,8 +5,10 @@ import {
   faArrowRight,
   faShieldAlt,
   faChartLine,
+  faChartBar,
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function WelcomePage({ onStartSurvey }) {
   return (
@@ -141,15 +143,25 @@ export default function WelcomePage({ onStartSurvey }) {
 
           {/* Start Survey Button */}
           <div className="text-center mt-8">
-            <button
-              onClick={onStartSurvey}
-              className="btn-primary text-lg px-8 py-4"
-            >
-              Start Survey
-              <FontAwesomeIcon icon={faArrowRight} />
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button
+                onClick={onStartSurvey}
+                className="btn-primary text-lg px-8 py-4"
+              >
+                Start Survey
+                <FontAwesomeIcon icon={faArrowRight} />
+              </button>
+
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-800 text-white font-medium py-4 px-8 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 text-lg"
+              >
+                <FontAwesomeIcon icon={faChartBar} />
+                View Dashboard
+              </Link>
+            </div>
             <p className="text-gray-500 mt-4">
-              Estimated completion time: 10-15 minutes
+              Survey estimated completion time: 10-15 minutes
             </p>
           </div>
         </div>

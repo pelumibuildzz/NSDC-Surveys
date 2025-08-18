@@ -68,12 +68,12 @@ export default function Dashboard() {
     if (!data || data.length === 0) return null;
 
     // Debug: Log first row to understand data structure
-    console.log('Sample data row:', data[0]);
-    console.log('Sugar type data:', {
-      whiteSugar: data[0]?.['White Sugar (MT)'],
-      brownSugar: data[0]?.['Brown Sugar (MT)'],
-      liquidSugar: data[0]?.['Liquid Sugar (MT)'],
-      other: data[0]?.['Other (MT)']
+    console.log("Sample data row:", data[0]);
+    console.log("Sugar type data:", {
+      whiteSugar: data[0]?.["White Sugar (MT)"],
+      brownSugar: data[0]?.["Brown Sugar (MT)"],
+      liquidSugar: data[0]?.["Liquid Sugar (MT)"],
+      other: data[0]?.["Other (MT)"],
     });
 
     // Process data for different chart types
@@ -87,7 +87,7 @@ export default function Dashboard() {
       alternativeSweeteners: processAlternativeSweetenersData(data),
     };
 
-    console.log('Processed sugar type data:', processed.sugarTypeBreakdown);
+    console.log("Processed sugar type data:", processed.sugarTypeBreakdown);
     return processed;
   };
 
@@ -120,7 +120,7 @@ export default function Dashboard() {
 
   const processAlternativeSweetenersData = (data) => {
     const years = ["2022", "2023", "2024"];
-    
+
     // Calculate total alternative volume by year
     const alternativeData = years.map((year) => {
       const total = data.reduce((sum, row) => {
@@ -145,24 +145,29 @@ export default function Dashboard() {
   };
 
   const processSugarTypeData = (data) => {
-    const sugarTypes = ["White Sugar (MT)", "Brown Sugar (MT)", "Liquid Sugar (MT)", "Other (MT)"];
+    const sugarTypes = [
+      "White Sugar (MT)",
+      "Brown Sugar (MT)",
+      "Liquid Sugar (MT)",
+      "Other (MT)",
+    ];
     const typeLabels = ["White Sugar", "Brown Sugar", "Liquid Sugar", "Other"];
-    
+
     const typeData = sugarTypes.map((type) => {
       return data.reduce((sum, row) => {
         const value = row[type];
         let amount = 0;
-        
-        if (value && typeof value === 'string') {
+
+        if (value && typeof value === "string") {
           try {
             // Try to parse JSON-like strings
-            if (value.startsWith('{') && value.endsWith('}')) {
+            if (value.startsWith("{") && value.endsWith("}")) {
               // Parse object-like strings: {granulated: 3, syrup: 32}
-              const cleanValue = value.replace(/[{}]/g, '').trim();
+              const cleanValue = value.replace(/[{}]/g, "").trim();
               if (cleanValue) {
-                const pairs = cleanValue.split(',');
-                pairs.forEach(pair => {
-                  const [key, val] = pair.split(':').map(s => s.trim());
+                const pairs = cleanValue.split(",");
+                pairs.forEach((pair) => {
+                  const [key, val] = pair.split(":").map((s) => s.trim());
                   const numVal = parseFloat(val);
                   if (!isNaN(numVal)) {
                     amount += numVal;
@@ -180,10 +185,10 @@ export default function Dashboard() {
               amount = numbers.reduce((acc, num) => acc + parseFloat(num), 0);
             }
           }
-        } else if (typeof value === 'number') {
+        } else if (typeof value === "number") {
           amount = value;
         }
-        
+
         return sum + amount;
       }, 0);
     });
@@ -214,11 +219,13 @@ export default function Dashboard() {
   const processRawMaterialData = (data) => {
     // Group by company and raw material source
     const companies = [
-      ...new Set(
-        data.map((row) => row["Company Name"] || "Unknown")
-      ),
+      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
     ];
-    const sources = ["Raw Material - Sugarcane (%)", "Raw Material - Sugar Beet (%)", "Raw Material - Dont Know (%)"];
+    const sources = [
+      "Raw Material - Sugarcane (%)",
+      "Raw Material - Sugar Beet (%)",
+      "Raw Material - Dont Know (%)",
+    ];
     const sourceLabels = ["Sugarcane", "Sugar Beet", "Don't Know"];
 
     const datasets = sources.map((source, index) => {
@@ -232,14 +239,15 @@ export default function Dashboard() {
         const companyRows = data.filter(
           (row) => (row["Company Name"] || "Unknown") === company
         );
-        
+
         if (companyRows.length === 0) return 0;
-        
-        const avgPercentage = companyRows.reduce((sum, row) => {
-          const pct = parseFloat(row[source] || 0);
-          return sum + pct;
-        }, 0) / companyRows.length;
-        
+
+        const avgPercentage =
+          companyRows.reduce((sum, row) => {
+            const pct = parseFloat(row[source] || 0);
+            return sum + pct;
+          }, 0) / companyRows.length;
+
         return avgPercentage;
       });
 
@@ -285,19 +293,17 @@ export default function Dashboard() {
 
   const processImpactFactorsData = (data) => {
     const companies = [
-      ...new Set(
-        data.map((row) => row["Company Name"] || "Unknown")
-      ),
+      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
     ];
     const factors = [
       "Exchange Rate Fluctuations",
-      "Overall Economic Growth", 
+      "Overall Economic Growth",
       "Demand for Low Calorie Products",
       "Demand for Natural Ingredients",
       "Import Tariffs/Levies",
       "Labelling Requirements",
       "Availability of Sugar in Nigerian Market",
-      "Logistical Challenges"
+      "Logistical Challenges",
     ];
 
     const datasets = factors.map((factor, index) => {
@@ -316,15 +322,16 @@ export default function Dashboard() {
         const companyRows = data.filter(
           (row) => (row["Company Name"] || "Unknown") === company
         );
-        
+
         if (companyRows.length === 0) return 0;
-        
+
         // Impact factor rating (1-5 scale) - get average for company
-        const avgRating = companyRows.reduce((sum, row) => {
-          const impact = parseFloat(row[factor] || 0);
-          return sum + impact;
-        }, 0) / companyRows.length;
-        
+        const avgRating =
+          companyRows.reduce((sum, row) => {
+            const impact = parseFloat(row[factor] || 0);
+            return sum + impact;
+          }, 0) / companyRows.length;
+
         return avgRating;
       });
 
@@ -596,9 +603,7 @@ export default function Dashboard() {
                   <div className="text-2xl font-bold text-green-600">
                     {[
                       ...new Set(
-                        dashboardData?.map(
-                          (row) => row["Company Name"]
-                        )
+                        dashboardData?.map((row) => row["Company Name"])
                       ),
                     ]?.length || 0}
                   </div>

@@ -99,6 +99,8 @@ export default function Dashboard() {
       sugarTypesDetailed: processSugarTypesDetailedData(data),
       alternativesUsage: processAlternativesUsageData(data),
       surveyDifficulty: processSurveyDifficultyData(data),
+      futureAlternativeIntentions: processFutureAlternativeIntentionsData(data),
+      plannedProductLaunches: processPlannedProductLaunchesData(data),
     };
 
     console.log("Processed sugar type data:", processed.sugarTypeBreakdown);
@@ -713,17 +715,20 @@ export default function Dashboard() {
     ];
     const typeLabels = ["White Sugar", "Brown Sugar", "Liquid Sugar", "Other"];
 
-    const datasets = sugarTypes.map((type, index) => {
-      const colors = [
-        "rgba(255, 99, 132, 0.8)",
-        "rgba(54, 162, 235, 0.8)",
-        "rgba(255, 205, 86, 0.8)",
-        "rgba(75, 192, 192, 0.8)",
-      ];
+    // Collect all forms and sugar type data
+    const formsMap = {};
+    const sugarTypeData = {};
 
-      const forms = {};
-      data.forEach((row) => {
+    // Initialize sugar types
+    typeLabels.forEach((label) => {
+      sugarTypeData[label] = {};
+    });
+
+    data.forEach((row) => {
+      sugarTypes.forEach((type, index) => {
         const value = row[type];
+        const label = typeLabels[index];
+
         if (value && typeof value === "string" && value.startsWith("{")) {
           try {
             const cleanValue = value.replace(/[{}]/g, "").trim();
@@ -733,7 +738,11 @@ export default function Dashboard() {
                 const [key, val] = pair.split(":").map((s) => s.trim());
                 const numVal = parseFloat(val);
                 if (!isNaN(numVal)) {
-                  forms[key] = (forms[key] || 0) + numVal;
+                  if (!sugarTypeData[label][key]) {
+                    sugarTypeData[label][key] = 0;
+                  }
+                  sugarTypeData[label][key] += numVal;
+                  formsMap[key] = true;
                 }
               });
             }
@@ -742,40 +751,29 @@ export default function Dashboard() {
           }
         }
       });
-
-      return {
-        label: typeLabels[index],
-        data: Object.values(forms),
-        backgroundColor: colors[index],
-        borderColor: colors[index],
-        borderWidth: 1,
-      };
     });
 
-    // Get all unique forms
-    const allForms = new Set();
-    data.forEach((row) => {
-      sugarTypes.forEach((type) => {
-        const value = row[type];
-        if (value && typeof value === "string" && value.startsWith("{")) {
-          try {
-            const cleanValue = value.replace(/[{}]/g, "").trim();
-            if (cleanValue) {
-              const pairs = cleanValue.split(",");
-              pairs.forEach((pair) => {
-                const [key] = pair.split(":").map((s) => s.trim());
-                allForms.add(key);
-              });
-            }
-          } catch (e) {
-            // ignore
-          }
-        }
-      });
-    });
+    const allForms = Object.keys(formsMap);
+    const colors = [
+      "rgba(255, 99, 132, 0.8)",
+      "rgba(54, 162, 235, 0.8)",
+      "rgba(255, 205, 86, 0.8)",
+      "rgba(75, 192, 192, 0.8)",
+      "rgba(153, 102, 255, 0.8)",
+      "rgba(255, 159, 64, 0.8)",
+    ];
+
+    // Create datasets - one for each form
+    const datasets = allForms.map((form, index) => ({
+      label: form,
+      data: typeLabels.map((sugarType) => sugarTypeData[sugarType][form] || 0),
+      backgroundColor: colors[index % colors.length],
+      borderColor: colors[index % colors.length],
+      borderWidth: 1,
+    }));
 
     return {
-      labels: Array.from(allForms),
+      labels: typeLabels,
       datasets,
     };
   };
@@ -830,6 +828,98 @@ export default function Dashboard() {
           data: values,
           backgroundColor: "rgba(147, 51, 234, 0.8)",
           borderColor: "rgba(147, 51, 234, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  const processFutureAlternativeIntentionsData = (data) => {
+    const intentionsCount = {};
+    data.forEach((row) => {
+      const intention = row["Future Alternative Intentions"] || "Unknown";
+      intentionsCount[intention] = (intentionsCount[intention] || 0) + 1;
+    });
+
+    const intentionsLabels = {
+      "significantly-increase": "Significantly Increase",
+      "moderately-increase": "Moderately Increase",
+      "slightly-increase": "Slightly Increase",
+      "maintain-current": "Maintain Current",
+      "slightly-decrease": "Slightly Decrease",
+      "moderately-decrease": "Moderately Decrease",
+      "significantly-decrease": "Significantly Decrease",
+      "no-plans": "No Plans",
+    };
+
+    const labels = Object.keys(intentionsCount).map(
+      (key) =>
+        intentionsLabels[key] ||
+        key.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+    );
+    const values = Object.values(intentionsCount);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "Number of Companies",
+          data: values,
+          backgroundColor: "rgba(249, 115, 22, 0.8)",
+          borderColor: "rgba(249, 115, 22, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  const processPlannedProductLaunchesData = (data) => {
+    const launchesCount = {};
+    data.forEach((row) => {
+      const launches = row["Planned Product Launches"] || "Unknown";
+      launchesCount[launches] = (launchesCount[launches] || 0) + 1;
+    });
+
+    const launchesLabels = {
+      increase: "Yes, will increase usage",
+      decrease: "Yes, will decrease usage",
+      no: "No",
+      "yes-increase": "Yes, will increase usage",
+      "yes-decrease": "Yes, will decrease usage",
+      "significantly-increase": "Yes, will increase usage",
+      "moderately-increase": "Yes, will increase usage",
+      "slightly-increase": "Yes, will increase usage",
+      "maintain-current": "No",
+      "slightly-decrease": "Yes, will decrease usage",
+      "moderately-decrease": "Yes, will decrease usage",
+      "significantly-decrease": "Yes, will decrease usage",
+      "no-plans": "No",
+      none: "No",
+    };
+
+    // Group responses into the three main categories
+    const groupedCount = {
+      "Yes, will increase usage": 0,
+      "Yes, will decrease usage": 0,
+      No: 0,
+    };
+
+    Object.entries(launchesCount).forEach(([key, count]) => {
+      const mappedLabel = launchesLabels[key] || "No";
+      groupedCount[mappedLabel] += count;
+    });
+
+    const labels = Object.keys(groupedCount);
+    const values = Object.values(groupedCount);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "Number of Companies",
+          data: values,
+          backgroundColor: "rgba(16, 185, 129, 0.8)",
+          borderColor: "rgba(16, 185, 129, 1)",
           borderWidth: 1,
         },
       ],
@@ -933,20 +1023,36 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Sugar Consumption Trends */}
-            <section className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Sugar Consumption Trends (2022-2024)
-              </h2>
-              <div className="h-64">
-                {chartData.sugarConsumption && (
-                  <Line
-                    data={chartData.sugarConsumption}
-                    options={chartOptions}
-                  />
-                )}
-              </div>
-            </section>
+            {/* Historical Data with Costs */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Sugar Consumption Trends (2022-2024)
+                </h2>
+                <div className="h-64">
+                  {chartData.sugarConsumption && (
+                    <Line
+                      data={chartData.sugarConsumption}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+
+              <section className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Historical Sugar Costs (2022-2024)
+                </h2>
+                <div className="h-64">
+                  {chartData.historicalCosts && (
+                    <Line
+                      data={chartData.historicalCosts}
+                      options={chartOptions}
+                    />
+                  )}
+                </div>
+              </section>
+            </div>
 
             {/* Alternative Sweeteners */}
             <section className="bg-white rounded-lg shadow p-6">
@@ -1116,37 +1222,6 @@ export default function Dashboard() {
               </section>
             </div>
 
-            {/* Historical Data with Costs */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <section className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Sugar Consumption Trends (2022-2024)
-                </h2>
-                <div className="h-64">
-                  {chartData.sugarConsumption && (
-                    <Line
-                      data={chartData.sugarConsumption}
-                      options={chartOptions}
-                    />
-                  )}
-                </div>
-              </section>
-
-              <section className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Historical Sugar Costs (2022-2024)
-                </h2>
-                <div className="h-64">
-                  {chartData.historicalCosts && (
-                    <Line
-                      data={chartData.historicalCosts}
-                      options={chartOptions}
-                    />
-                  )}
-                </div>
-              </section>
-            </div>
-
             {/* Company-wise Analysis */}
             <section className="bg-white rounded-lg shadow p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -1220,6 +1295,36 @@ export default function Dashboard() {
                 </div>
               </section>
             </div>
+
+            {/* Future Alternative Intentions */}
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Future Alternative Sweetener Intentions
+              </h2>
+              <div className="h-64">
+                {chartData.futureAlternativeIntentions && (
+                  <Bar
+                    data={chartData.futureAlternativeIntentions}
+                    options={chartOptions}
+                  />
+                )}
+              </div>
+            </section>
+
+            {/* Planned Product Launches */}
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Planned Product Launches or Reformulations
+              </h2>
+              <div className="h-64">
+                {chartData.plannedProductLaunches && (
+                  <Bar
+                    data={chartData.plannedProductLaunches}
+                    options={chartOptions}
+                  />
+                )}
+              </div>
+            </section>
 
             {/* Survey Feedback */}
             <section className="bg-white rounded-lg shadow p-6">

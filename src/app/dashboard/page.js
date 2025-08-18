@@ -85,6 +85,7 @@ export default function Dashboard() {
       forecasts: processForecastData(data),
       domesticVsImported: processDomesticImportedData(data),
       alternativeSweeteners: processAlternativeSweetenersData(data),
+      industryDistribution: processIndustryDistributionData(data),
     };
 
     console.log("Processed sugar type data:", processed.sugarTypeBreakdown);
@@ -375,6 +376,69 @@ export default function Dashboard() {
     };
   };
 
+  const processIndustryDistributionData = (data) => {
+    // Count occurrences of each industry category
+    const industryCount = {};
+
+    data.forEach((row) => {
+      const industry = row["Primary Industry"] || "Unknown";
+      industryCount[industry] = (industryCount[industry] || 0) + 1;
+    });
+
+    // Convert industry keys to readable labels
+    const industryLabels = {
+      "bakery-confectionery": "Bakery & Confectionery",
+      "non-alcoholic-beverages": "Non-Alcoholic Beverages",
+      "dairy-frozen-desserts": "Dairy & Frozen Desserts",
+      "processed-canned-foods": "Processed & Canned Foods",
+      "brewing-alcoholic": "Brewing & Alcoholic Beverages",
+      pharmaceuticals: "Pharmaceuticals",
+      "personal-care-cosmetics": "Personal Care & Cosmetics",
+      "chemical-industrial": "Chemical & Industrial Products",
+      "hospitality-food-service": "Hospitality & Food Service",
+      "animal-feed": "Animal Feed",
+      "biofuel-industrial-alcohol": "Biofuel & Industrial Alcohol",
+      others: "Others",
+    };
+
+    const labels = Object.keys(industryCount).map(
+      (key) =>
+        industryLabels[key] ||
+        key.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+    );
+    const values = Object.values(industryCount);
+
+    // Generate colors for each industry
+    const colors = [
+      "rgba(255, 99, 132, 0.8)",
+      "rgba(54, 162, 235, 0.8)",
+      "rgba(255, 205, 86, 0.8)",
+      "rgba(75, 192, 192, 0.8)",
+      "rgba(153, 102, 255, 0.8)",
+      "rgba(255, 159, 64, 0.8)",
+      "rgba(199, 199, 199, 0.8)",
+      "rgba(83, 102, 255, 0.8)",
+      "rgba(255, 99, 255, 0.8)",
+      "rgba(99, 255, 132, 0.8)",
+      "rgba(255, 132, 99, 0.8)",
+      "rgba(132, 99, 255, 0.8)",
+    ];
+
+    const borderColors = colors.map((color) => color.replace("0.8", "1"));
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          data: values,
+          backgroundColor: colors.slice(0, labels.length),
+          borderColor: borderColors.slice(0, labels.length),
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -497,6 +561,29 @@ export default function Dashboard() {
                   <Line
                     data={chartData.alternativeSweeteners}
                     options={chartOptions}
+                  />
+                )}
+              </div>
+            </section>
+
+            {/* Industry Distribution */}
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Industry Category Distribution
+              </h2>
+              <div className="h-80">
+                {chartData.industryDistribution && (
+                  <Bar
+                    data={chartData.industryDistribution}
+                    options={{
+                      ...chartOptions,
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          max: 20,
+                        },
+                      },
+                    }}
                   />
                 )}
               </div>

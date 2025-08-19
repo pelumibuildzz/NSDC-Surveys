@@ -42,9 +42,10 @@
           },
           {
             "id": "primaryLocation",
-            "type": "select",
+            "type": "checkbox",
             "label": "Location (State) of Primary Production Facility(ies)",
             "required": true,
+            "note": "Select all states where your company has production facilities",
             "options": [
               { "value": "abia", "label": "Abia" },
               { "value": "adamawa", "label": "Adamawa" },
@@ -247,7 +248,8 @@
             "type": "checkbox",
             "label": "Which types of sugar alternatives do you use?",
             "description": "Select all that apply",
-            "required": true,
+            "required": false,
+            "conditionallyRequired": true,
             "dependsOn": { "usesSugarAlternatives": "yes" },
             "options": [
               { "value": "hfcs", "label": "High-Fructose Corn Syrup (HFCS)" },
@@ -264,7 +266,8 @@
             "type": "checkbox",
             "label": "Primary reasons for using sugar alternatives?",
             "description": "Select top 3",
-            "required": true,
+            "required": false,
+            "conditionallyRequired": true,
             "maxSelections": 3,
             "dependsOn": { "usesSugarAlternatives": "yes" },
             "options": [
@@ -280,7 +283,8 @@
             "id": "alternativesVolume",
             "type": "table",
             "label": "Total volume of sugar alternatives consumed",
-            "required": true,
+            "required": false,
+            "conditionallyRequired": true,
             "dependsOn": { "usesSugarAlternatives": "yes" },
             "columns": [
               { "key": "year", "label": "Year", "type": "text", "readonly": true },

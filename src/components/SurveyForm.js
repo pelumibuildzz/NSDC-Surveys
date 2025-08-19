@@ -55,7 +55,10 @@ export default function SurveyForm({
     const sectionData = formData[currentSection] || {};
 
     currentSectionData.questions.forEach((question) => {
-      if (question.required) {
+      // Check if the question should be required based on dependencies
+      const shouldBeRequired = isQuestionRequired(question, sectionData);
+
+      if (shouldBeRequired) {
         const value = sectionData[question.id];
 
         if (
@@ -76,7 +79,9 @@ export default function SurveyForm({
     const sectionData = formData[currentSection] || {};
 
     return currentSectionData.questions.every((question) => {
-      if (!question.required) return true;
+      const shouldBeRequired = isQuestionRequired(question, sectionData);
+
+      if (!shouldBeRequired) return true;
 
       const value = sectionData[question.id];
       return (
@@ -85,6 +90,29 @@ export default function SurveyForm({
         (!Array.isArray(value) || value.length > 0)
       );
     });
+  };
+
+  // Helper function to determine if a question should be required
+  const isQuestionRequired = (question, sectionData) => {
+    // Always required questions
+    if (question.required) return true;
+
+    // Conditionally required questions
+    if (question.conditionallyRequired && question.dependsOn) {
+      const dependencyKey = Object.keys(question.dependsOn)[0];
+      const dependencyValue = question.dependsOn[dependencyKey];
+
+      // Check if the dependency is met in current section or across all form data
+      const currentSectionValue = sectionData[dependencyKey];
+      if (currentSectionValue === dependencyValue) return true;
+
+      // Check across all sections for the dependency
+      for (const [sectionId, data] of Object.entries(formData)) {
+        if (data[dependencyKey] === dependencyValue) return true;
+      }
+    }
+
+    return false;
   };
 
   const handleNext = () => {
@@ -191,6 +219,10 @@ export default function SurveyForm({
             value={formData[currentSection]?.[question.id]}
             onChange={handleAnswerChange}
             error={errors[question.id]}
+            isRequired={isQuestionRequired(
+              question,
+              formData[currentSection] || {}
+            )}
           />
         ))}
       </div>

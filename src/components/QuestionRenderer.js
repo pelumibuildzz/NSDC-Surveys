@@ -4,7 +4,13 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAsterisk, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-export default function QuestionRenderer({ question, value, onChange, error }) {
+export default function QuestionRenderer({
+  question,
+  value,
+  onChange,
+  error,
+  isRequired,
+}) {
   const handleInputChange = (newValue) => {
     onChange(question.id, newValue);
   };
@@ -635,7 +641,7 @@ export default function QuestionRenderer({ question, value, onChange, error }) {
     <div className="space-y-3">
       <label className="form-label">
         {question.label}
-        {question.required && (
+        {isRequired && (
           <FontAwesomeIcon
             icon={faAsterisk}
             className="text-red-500 text-xs ml-1"

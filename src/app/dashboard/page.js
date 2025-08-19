@@ -64,6 +64,11 @@ export default function Dashboard() {
     }
   };
 
+  // Helper function to get company identifier (Company Name or Submission ID)
+  const getCompanyId = (row) => {
+    return row["Company Name"] || row["Submission ID"] || "Unknown";
+  };
+
   const processChartData = (data) => {
     if (!data || data.length === 0) return null;
 
@@ -234,9 +239,7 @@ export default function Dashboard() {
 
   const processRawMaterialData = (data) => {
     // Group by company and raw material source
-    const companies = [
-      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
-    ];
+    const companies = [...new Set(data.map((row) => getCompanyId(row)))];
     const sources = [
       "Raw Material - Sugarcane (%)",
       "Raw Material - Sugar Beet (%)",
@@ -252,9 +255,7 @@ export default function Dashboard() {
       ];
 
       const companyData = companies.map((company) => {
-        const companyRows = data.filter(
-          (row) => (row["Company Name"] || "Unknown") === company
-        );
+        const companyRows = data.filter((row) => getCompanyId(row) === company);
 
         if (companyRows.length === 0) return 0;
 
@@ -308,9 +309,7 @@ export default function Dashboard() {
   };
 
   const processImpactFactorsData = (data) => {
-    const companies = [
-      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
-    ];
+    const companies = [...new Set(data.map((row) => getCompanyId(row)))];
     const factors = [
       "Exchange Rate Fluctuations",
       "Overall Economic Growth",
@@ -335,9 +334,7 @@ export default function Dashboard() {
       ];
 
       const companyData = companies.map((company) => {
-        const companyRows = data.filter(
-          (row) => (row["Company Name"] || "Unknown") === company
-        );
+        const companyRows = data.filter((row) => getCompanyId(row) === company);
 
         if (companyRows.length === 0) return 0;
 
@@ -589,9 +586,10 @@ export default function Dashboard() {
   };
 
   const processSugarConsumptionByCompanyData = (data) => {
-    const companies = [
-      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
-    ].slice(0, 8);
+    const companies = [...new Set(data.map((row) => getCompanyId(row)))].slice(
+      0,
+      8
+    );
     const years = ["2022", "2023", "2024"];
 
     const datasets = years.map((year, index) => {
@@ -601,9 +599,7 @@ export default function Dashboard() {
         "rgba(255, 205, 86, 0.8)",
       ];
       const companyData = companies.map((company) => {
-        const companyRows = data.filter(
-          (row) => (row["Company Name"] || "Unknown") === company
-        );
+        const companyRows = data.filter((row) => getCompanyId(row) === company);
         const total = companyRows.reduce((sum, row) => {
           const consumption = parseFloat(
             row[`${year} Historical Volume (MT)`] || 0
@@ -629,9 +625,10 @@ export default function Dashboard() {
   };
 
   const processAlternativeSweetenersByCompanyData = (data) => {
-    const companies = [
-      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
-    ].slice(0, 8);
+    const companies = [...new Set(data.map((row) => getCompanyId(row)))].slice(
+      0,
+      8
+    );
     const years = ["2022", "2023", "2024"];
 
     const datasets = years.map((year, index) => {
@@ -641,9 +638,7 @@ export default function Dashboard() {
         "rgba(255, 205, 86, 0.8)",
       ];
       const companyData = companies.map((company) => {
-        const companyRows = data.filter(
-          (row) => (row["Company Name"] || "Unknown") === company
-        );
+        const companyRows = data.filter((row) => getCompanyId(row) === company);
         const total = companyRows.reduce((sum, row) => {
           const volume = parseFloat(
             row[`${year} Alternative Volume (MT)`] || 0
@@ -669,9 +664,10 @@ export default function Dashboard() {
   };
 
   const processForecastsByCompanyData = (data) => {
-    const companies = [
-      ...new Set(data.map((row) => row["Company Name"] || "Unknown")),
-    ].slice(0, 8);
+    const companies = [...new Set(data.map((row) => getCompanyId(row)))].slice(
+      0,
+      8
+    );
     const years = ["2025", "2026", "2027"];
 
     const datasets = years.map((year, index) => {
@@ -681,9 +677,7 @@ export default function Dashboard() {
         "rgba(249, 115, 22, 0.8)",
       ];
       const companyData = companies.map((company) => {
-        const companyRows = data.filter(
-          (row) => (row["Company Name"] || "Unknown") === company
-        );
+        const companyRows = data.filter((row) => getCompanyId(row) === company);
         const total = companyRows.reduce((sum, row) => {
           const forecast = parseFloat(row[`${year} Forecast (MT)`] || 0);
           return sum + forecast;
@@ -928,6 +922,7 @@ export default function Dashboard() {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top",
@@ -936,6 +931,41 @@ export default function Dashboard() {
     scales: {
       y: {
         beginAtZero: true,
+      },
+      x: {
+        ticks: {
+          maxRotation: 45,
+          minRotation: 0,
+        },
+      },
+    },
+  };
+
+  // Responsive chart options for charts with many data points
+  const responsiveChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+      x: {
+        ticks: {
+          maxRotation: 45,
+          minRotation: 0,
+          callback: function (value, index, ticks) {
+            const label = this.getLabelForValue(value);
+            if (label.length > 20) {
+              return label.substring(0, 17) + "...";
+            }
+            return label;
+          },
+        },
       },
     },
   };
@@ -1129,19 +1159,32 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Raw Material Source Percentages by Company
               </h2>
-              <div className="h-80">
-                {chartData.rawMaterialSources && (
-                  <Bar
-                    data={chartData.rawMaterialSources}
-                    options={{
-                      ...chartOptions,
-                      scales: {
-                        x: { stacked: true },
-                        y: { stacked: true, beginAtZero: true, max: 100 },
-                      },
-                    }}
-                  />
-                )}
+              <div className="overflow-x-auto">
+                <div
+                  className="min-w-full"
+                  style={{ height: "400px", minWidth: "600px" }}
+                >
+                  {chartData.rawMaterialSources && (
+                    <Bar
+                      data={chartData.rawMaterialSources}
+                      options={{
+                        ...responsiveChartOptions,
+                        scales: {
+                          ...responsiveChartOptions.scales,
+                          x: {
+                            ...responsiveChartOptions.scales.x,
+                            stacked: true,
+                          },
+                          y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                          },
+                        },
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             </section>
 
@@ -1150,18 +1193,24 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Impact Factors by Company (Rating Scale 1-5)
               </h2>
-              <div className="h-80">
-                {chartData.impactFactors && (
-                  <Bar
-                    data={chartData.impactFactors}
-                    options={{
-                      ...chartOptions,
-                      scales: {
-                        y: { beginAtZero: true, max: 5 },
-                      },
-                    }}
-                  />
-                )}
+              <div className="overflow-x-auto">
+                <div
+                  className="min-w-full"
+                  style={{ height: "500px", minWidth: "800px" }}
+                >
+                  {chartData.impactFactors && (
+                    <Bar
+                      data={chartData.impactFactors}
+                      options={{
+                        ...responsiveChartOptions,
+                        scales: {
+                          ...responsiveChartOptions.scales,
+                          y: { beginAtZero: true, max: 5 },
+                        },
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             </section>
 
@@ -1227,13 +1276,18 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Sugar Consumption by Company (2022-2024)
               </h2>
-              <div className="h-80">
-                {chartData.sugarConsumptionByCompany && (
-                  <Bar
-                    data={chartData.sugarConsumptionByCompany}
-                    options={chartOptions}
-                  />
-                )}
+              <div className="overflow-x-auto">
+                <div
+                  className="min-w-full"
+                  style={{ height: "400px", minWidth: "600px" }}
+                >
+                  {chartData.sugarConsumptionByCompany && (
+                    <Bar
+                      data={chartData.sugarConsumptionByCompany}
+                      options={responsiveChartOptions}
+                    />
+                  )}
+                </div>
               </div>
             </section>
 
@@ -1241,13 +1295,18 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Alternative Sweeteners by Company (2022-2024)
               </h2>
-              <div className="h-80">
-                {chartData.alternativeSweetenersByCompany && (
-                  <Bar
-                    data={chartData.alternativeSweetenersByCompany}
-                    options={chartOptions}
-                  />
-                )}
+              <div className="overflow-x-auto">
+                <div
+                  className="min-w-full"
+                  style={{ height: "400px", minWidth: "600px" }}
+                >
+                  {chartData.alternativeSweetenersByCompany && (
+                    <Bar
+                      data={chartData.alternativeSweetenersByCompany}
+                      options={responsiveChartOptions}
+                    />
+                  )}
+                </div>
               </div>
             </section>
 
@@ -1255,13 +1314,18 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Forecasted Consumption by Company (2025-2027)
               </h2>
-              <div className="h-80">
-                {chartData.forecastsByCompany && (
-                  <Bar
-                    data={chartData.forecastsByCompany}
-                    options={chartOptions}
-                  />
-                )}
+              <div className="overflow-x-auto">
+                <div
+                  className="min-w-full"
+                  style={{ height: "400px", minWidth: "600px" }}
+                >
+                  {chartData.forecastsByCompany && (
+                    <Bar
+                      data={chartData.forecastsByCompany}
+                      options={responsiveChartOptions}
+                    />
+                  )}
+                </div>
               </div>
             </section>
 
@@ -1357,7 +1421,7 @@ export default function Dashboard() {
                   <div className="text-2xl font-bold text-green-600">
                     {[
                       ...new Set(
-                        dashboardData?.map((row) => row["Company Name"])
+                        dashboardData?.map((row) => getCompanyId(row))
                       ),
                     ]?.length || 0}
                   </div>

@@ -53,9 +53,13 @@ export default function Home() {
       }
     >
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header
+        className={`bg-white shadow-sm border-b border-gray-200 ${
+          !isMobile ? "fixed top-0 left-0 right-0 z-50" : ""
+        }`}
+      >
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className={`flex items-center justify-between`}>
             <div className="flex items-center gap-4">
               <Image
                 src="/nsdc.png"
@@ -87,32 +91,45 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Desktop Navigation */}
-          {!isMobile && (
-            <div className="lg:col-span-1">
-              <SectionNavigation
+      <div className={isMobile ? "container mx-auto px-4 py-8" : "pt-20 pb-8"}>
+        {!isMobile ? (
+          /* Desktop Layout with Fixed Navigation */
+          <>
+            {/* Fixed Left Navigation */}
+            <div className="fixed left-0 top-0 h-full w-80 bg-white shadow-lg z-40 pt-20 overflow-y-auto">
+              <div className="p-6">
+                <SectionNavigation
+                  sections={surveyData.survey.sections}
+                  currentSection={currentSection}
+                  onSectionChange={handleSectionChange}
+                  completedSections={completedSections}
+                />
+              </div>
+            </div>
+
+            {/* Main Content with Left Margin */}
+            <div className="ml-80 min-h-screen px-8 py-8">
+              <SurveyForm
                 sections={surveyData.survey.sections}
                 currentSection={currentSection}
                 onSectionChange={handleSectionChange}
                 completedSections={completedSections}
+                onSectionComplete={handleSectionComplete}
+                onSubmit={handleSurveySubmit}
               />
             </div>
-          )}
-
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <SurveyForm
-              sections={surveyData.survey.sections}
-              currentSection={currentSection}
-              onSectionChange={handleSectionChange}
-              completedSections={completedSections}
-              onSectionComplete={handleSectionComplete}
-              onSubmit={handleSurveySubmit}
-            />
-          </div>
-        </div>
+          </>
+        ) : (
+          /* Mobile Layout - Same as original */
+          <SurveyForm
+            sections={surveyData.survey.sections}
+            currentSection={currentSection}
+            onSectionChange={handleSectionChange}
+            completedSections={completedSections}
+            onSectionComplete={handleSectionComplete}
+            onSubmit={handleSurveySubmit}
+          />
+        )}
       </div>
 
       {/* Mobile Navigation */}

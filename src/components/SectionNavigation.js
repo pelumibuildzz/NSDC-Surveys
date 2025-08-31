@@ -41,11 +41,11 @@ export default function SectionNavigation({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+    <div className="h-full">
+      <h3 className="text-lg font-semibold text-gray-900 mb-6 px-2">
         Survey Sections
       </h3>
-      <nav className="space-y-2">
+      <nav className="space-y-3">
         {sections.map((section, index) => {
           const isActive = currentSection === section.id;
           const isCompleted = completedSections.includes(section.id);
@@ -57,18 +57,22 @@ export default function SectionNavigation({
               key={section.id}
               onClick={() => isAccessible && onSectionChange(section.id)}
               disabled={!isAccessible}
-              className={`section-nav-item w-full text-left ${
-                isActive ? "active" : isCompleted ? "completed" : ""
+              className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
+                isActive
+                  ? "bg-blue-50 border-l-4 border-blue-500"
+                  : isCompleted
+                  ? "bg-green-50 hover:bg-green-100"
+                  : "hover:bg-gray-50"
               } ${!isAccessible ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     isCompleted
-                      ? "bg-green-100 text-green-600"
+                      ? "bg-green-500 text-white"
                       : isActive
-                      ? "bg-blue-100 text-blue-600"
-                      : "bg-gray-100 text-gray-400"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-500"
                   }`}
                 >
                   {isCompleted ? (
@@ -80,9 +84,27 @@ export default function SectionNavigation({
                     />
                   )}
                 </div>
-                <div>
-                  <div className="font-medium">{section.title}</div>
-                  <div className="text-sm text-gray-500">
+                <div className="min-w-0 flex-1">
+                  <div
+                    className={`font-medium truncate ${
+                      isActive
+                        ? "text-blue-900"
+                        : isCompleted
+                        ? "text-green-900"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    {section.title}
+                  </div>
+                  <div
+                    className={`text-sm ${
+                      isActive
+                        ? "text-blue-600"
+                        : isCompleted
+                        ? "text-green-600"
+                        : "text-gray-500"
+                    }`}
+                  >
                     {section.questions.length} question
                     {section.questions.length !== 1 ? "s" : ""}
                   </div>

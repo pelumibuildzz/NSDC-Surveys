@@ -104,8 +104,9 @@ export default function Dashboard() {
       sugarTypesDetailed: processSugarTypesDetailedData(data),
       alternativesUsage: processAlternativesUsageData(data),
       surveyDifficulty: processSurveyDifficultyData(data),
-      futureAlternativeIntentions: processFutureAlternativeIntentionsData(data),
       plannedProductLaunches: processPlannedProductLaunchesData(data),
+      totalSugarConsumptionBySector:
+        processTotalSugarConsumptionBySectorData(data),
     };
 
     console.log("Processed sugar type data:", processed.sugarTypeBreakdown);
@@ -828,45 +829,6 @@ export default function Dashboard() {
     };
   };
 
-  const processFutureAlternativeIntentionsData = (data) => {
-    const intentionsCount = {};
-    data.forEach((row) => {
-      const intention = row["Future Alternative Intentions"] || "Unknown";
-      intentionsCount[intention] = (intentionsCount[intention] || 0) + 1;
-    });
-
-    const intentionsLabels = {
-      "significantly-increase": "Significantly Increase",
-      "moderately-increase": "Moderately Increase",
-      "slightly-increase": "Slightly Increase",
-      "maintain-current": "Maintain Current",
-      "slightly-decrease": "Slightly Decrease",
-      "moderately-decrease": "Moderately Decrease",
-      "significantly-decrease": "Significantly Decrease",
-      "no-plans": "No Plans",
-    };
-
-    const labels = Object.keys(intentionsCount).map(
-      (key) =>
-        intentionsLabels[key] ||
-        key.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
-    );
-    const values = Object.values(intentionsCount);
-
-    return {
-      labels: labels,
-      datasets: [
-        {
-          label: "Number of Companies",
-          data: values,
-          backgroundColor: "rgba(249, 115, 22, 0.8)",
-          borderColor: "rgba(249, 115, 22, 1)",
-          borderWidth: 1,
-        },
-      ],
-    };
-  };
-
   const processPlannedProductLaunchesData = (data) => {
     const launchesCount = {};
     data.forEach((row) => {
@@ -914,6 +876,122 @@ export default function Dashboard() {
           data: values,
           backgroundColor: "rgba(16, 185, 129, 0.8)",
           borderColor: "rgba(16, 185, 129, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
+  const processTotalSugarConsumptionBySectorData = (data) => {
+    const sectorConsumption = {};
+
+    // Industry labels mapping
+    const industryLabels = {
+      "bakery-confectionery": "Bakery & Confectionery",
+      "non-alcoholic-beverages": "Non-Alcoholic Beverages",
+      "dairy-frozen-desserts": "Dairy & Frozen Desserts",
+      "processed-canned-foods": "Processed & Canned Foods",
+      "brewing-alcoholic": "Brewing & Alcoholic Beverages",
+      pharmaceuticals: "Pharmaceuticals",
+      "personal-care-cosmetics": "Personal Care & Cosmetics",
+      "chemical-industrial": "Chemical & Industrial Products",
+      "hospitality-food-service": "Hospitality & Food Service",
+      "animal-feed": "Animal Feed",
+      "biofuel-industrial-alcohol": "Biofuel & Industrial Alcohol",
+      others: "Others",
+    };
+
+    // Calculate total sugar consumption for each sector
+    data.forEach((row) => {
+      const sector = row["Primary Industry"] || "others";
+      const sectorLabel =
+        industryLabels[sector] ||
+        sector.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+
+      // Sum up all sugar types for total consumption
+      const whiteSugar = parseSugarValue(row["White Sugar (MT)"] || 0);
+      const brownSugar = parseSugarValue(row["Brown Sugar (MT)"] || 0);
+      const liquidSugar = parseSugarValue(row["Liquid Sugar (MT)"] || 0);
+      const otherSugar = parseSugarValue(row["Other (MT)"] || 0);
+
+      const totalSugarConsumption =
+        whiteSugar + brownSugar + liquidSugar + otherSugar;
+
+      if (!sectorConsumption[sectorLabel]) {
+        sectorConsumption[sectorLabel] = 0;
+      }
+      sectorConsumption[sectorLabel] += totalSugarConsumption;
+    });
+
+    // Helper function to parse sugar values (handles object-like strings)
+    function parseSugarValue(value) {
+      if (!value) return 0;
+
+      if (typeof value === "string") {
+        try {
+          // Handle JSON-like strings: {granulated: 3, syrup: 32}
+          if (value.startsWith("{") && value.endsWith("}")) {
+            const cleanValue = value.replace(/[{}]/g, "").trim();
+            if (cleanValue) {
+              let total = 0;
+              const pairs = cleanValue.split(",");
+              pairs.forEach((pair) => {
+                const [key, val] = pair.split(":").map((s) => s.trim());
+                const numVal = parseFloat(val);
+                if (!isNaN(numVal)) {
+                  total += numVal;
+                }
+              });
+              return total;
+            }
+          } else {
+            // Try to parse as simple number
+            const parsed = parseFloat(value);
+            return !isNaN(parsed) ? parsed : 0;
+          }
+        } catch (e) {
+          // If parsing fails, try to extract numbers
+          const numbers = value.match(/\d+\.?\d*/g);
+          if (numbers) {
+            return numbers.reduce((acc, num) => acc + parseFloat(num), 0);
+          }
+        }
+      } else if (typeof value === "number") {
+        return value;
+      }
+
+      return 0;
+    }
+
+    const labels = Object.keys(sectorConsumption);
+    const values = Object.values(sectorConsumption);
+
+    // Generate colors for each sector
+    const colors = [
+      "rgba(255, 99, 132, 0.8)",
+      "rgba(54, 162, 235, 0.8)",
+      "rgba(255, 205, 86, 0.8)",
+      "rgba(75, 192, 192, 0.8)",
+      "rgba(153, 102, 255, 0.8)",
+      "rgba(255, 159, 64, 0.8)",
+      "rgba(199, 199, 199, 0.8)",
+      "rgba(83, 102, 255, 0.8)",
+      "rgba(255, 99, 255, 0.8)",
+      "rgba(99, 255, 132, 0.8)",
+      "rgba(255, 132, 99, 0.8)",
+      "rgba(132, 99, 255, 0.8)",
+    ];
+
+    const borderColors = colors.map((color) => color.replace("0.8", "1"));
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "Total Sugar Consumption (MT)",
+          data: values,
+          backgroundColor: colors.slice(0, labels.length),
+          borderColor: borderColors.slice(0, labels.length),
           borderWidth: 1,
         },
       ],
@@ -1114,6 +1192,35 @@ export default function Dashboard() {
                         y: {
                           beginAtZero: true,
                           max: 20,
+                        },
+                      },
+                    }}
+                  />
+                )}
+              </div>
+            </section>
+
+            {/* Total Sugar Consumption by Sector */}
+            <section className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Total Sugar Consumption by Sector
+              </h2>
+              <div className="h-80">
+                {chartData.totalSugarConsumptionBySector && (
+                  <Bar
+                    data={chartData.totalSugarConsumptionBySector}
+                    options={{
+                      ...chartOptions,
+                      plugins: {
+                        ...chartOptions.plugins,
+                        tooltip: {
+                          callbacks: {
+                            label: function (context) {
+                              return `${
+                                context.dataset.label
+                              }: ${context.parsed.y.toFixed(2)} MT`;
+                            },
+                          },
                         },
                       },
                     }}
@@ -1359,21 +1466,6 @@ export default function Dashboard() {
                 </div>
               </section>
             </div>
-
-            {/* Future Alternative Intentions */}
-            <section className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Future Alternative Sweetener Intentions
-              </h2>
-              <div className="h-64">
-                {chartData.futureAlternativeIntentions && (
-                  <Bar
-                    data={chartData.futureAlternativeIntentions}
-                    options={chartOptions}
-                  />
-                )}
-              </div>
-            </section>
 
             {/* Planned Product Launches */}
             <section className="bg-white rounded-lg shadow p-6">

@@ -142,6 +142,7 @@ async function submitToGoogleSheets(data, config) {
       "Product Breakdown",
 
       // Raw material and origin breakdown
+      "Raw Material Knowledge",
       "Raw Material - Sugarcane (%)",
       "Raw Material - Sugar Beet (%)",
       "Raw Material - Dont Know (%)",
@@ -155,7 +156,6 @@ async function submitToGoogleSheets(data, config) {
       "2024 Alternative Volume (MT)",
       "2023 Alternative Volume (MT)",
       "2022 Alternative Volume (MT)",
-      "Future Alternative Intentions",
 
       // Impact factors (consistent pattern without prefix)
       "Exchange Rate Fluctuations",
@@ -362,6 +362,9 @@ function flattenSurveyData(responses, submittedAt) {
     employees: "Number of Employees",
     procurementMethod: "Primary Procurement Method",
 
+    // Section 2 - Raw Material
+    rawMaterialKnowledge: "Raw Material Knowledge",
+
     // Section 6 - Survey Feedback
     surveyDifficulty: "Survey Difficulty",
     surveyImprovements: "Survey Improvements",
@@ -373,7 +376,6 @@ function flattenSurveyData(responses, submittedAt) {
     usesSugarAlternatives: "Uses Sugar Alternatives",
     alternativeTypes: "Alternative Types",
     alternativeReasons: "Alternative Reasons",
-    futureAlternativeIntentions: "Future Alternative Intentions",
 
     // Section 5 - Future Outlook
     alternativesFutureChange: "Alternatives Future Change",
@@ -517,6 +519,27 @@ function flattenSurveyData(responses, submittedAt) {
           flattened[`Raw Material - ${formattedSourceKey} (%)`] =
             percentage || "";
         });
+        return;
+      }
+
+      // Handle rawMaterialKnowledge question - if "no", set default percentages
+      if (questionId === "rawMaterialKnowledge" && answer) {
+        flattened["Raw Material Knowledge"] =
+          typeof answer === "object" && answer.value
+            ? answer.value === "yes"
+              ? "Yes, I can provide breakdown"
+              : "Don't Know"
+            : answer;
+
+        // If they don't know, set default raw material percentages
+        if (
+          (typeof answer === "object" && answer.value === "no") ||
+          answer === "no"
+        ) {
+          flattened["Raw Material - Sugarcane (%)"] = "";
+          flattened["Raw Material - Sugar Beet (%)"] = "";
+          flattened["Raw Material - Dont Know (%)"] = "100";
+        }
         return;
       }
 

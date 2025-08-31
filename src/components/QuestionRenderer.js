@@ -130,8 +130,13 @@ export default function QuestionRenderer({
         );
 
       case "checkbox":
+        const hasMany = question.options.length > 8; // Use columns if more than 8 options
+        const gridClass = hasMany
+          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
+          : "space-y-3";
+
         return (
-          <div className="space-y-3">
+          <div className={gridClass}>
             {question.options.map((option) => (
               <div key={option.value} className="space-y-2">
                 <label className="flex items-start gap-3 cursor-pointer p-2 -m-2 rounded hover:bg-gray-50">
@@ -167,9 +172,11 @@ export default function QuestionRenderer({
                         );
                       }
                     }}
-                    className="mt-1 text-blue-600 focus:ring-blue-500 rounded w-5 h-5"
+                    className="mt-1 text-blue-600 focus:ring-blue-500 rounded w-5 h-5 flex-shrink-0"
                   />
-                  <span className="text-gray-700">{option.label}</span>
+                  <span className="text-gray-700 text-sm sm:text-base break-words">
+                    {option.label}
+                  </span>
                 </label>
                 {option.hasTextField &&
                   Array.isArray(value) &&

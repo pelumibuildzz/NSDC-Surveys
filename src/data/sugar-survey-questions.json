@@ -16,8 +16,8 @@
             "type": "text",
             "label": "Company Name",
             "placeholder": "Enter company name",
-            "required": false,
-            "note": "Optional, for internal tracking. Will be kept confidential"
+            "required": true,
+            "note": "For internal tracking. Will be kept confidential"
           },
           {
             "id": "primaryIndustry",
@@ -119,9 +119,9 @@
             "label": "Primary Method for Procuring Sugar",
             "required": true,
             "options": [
-              { "value": "direct-domestic", "label": "Direct from domestic refiners/mills" },
-              { "value": "international-suppliers", "label": "Through international suppliers/traders" },
-              { "value": "local-distributors", "label": "From local distributors/importers" },
+              { "value": "direct-domestic", "label": "Direct from domestic refineries" },
+              { "value": "international-suppliers", "label": "Through international suppliers" },
+              { "value": "local-distributors", "label": "From local distributors" },
               { "value": "spot-market", "label": "Spot market purchases" },
               { "value": "mix", "label": "Mix of the above" }
             ]
@@ -192,15 +192,28 @@
             ]
           },
           {
+            "id": "rawMaterialKnowledge",
+            "type": "radio",
+            "label": "Raw Material Source Knowledge",
+            "description": "Do you know the breakdown of raw materials used in your sugar supply?",
+            "required": true,
+            "options": [
+              { "value": "yes", "label": "Yes, I can provide breakdown" },
+              { "value": "no", "label": "Don't Know" }
+            ],
+            "conditional": true
+          },
+          {
             "id": "rawMaterialSource",
             "type": "percentage",
             "label": "Breakdown by Raw Material Source",
             "description": "Estimate the percentage of your total 2024 sugar volume derived from the following sources (Total should be 100%)",
-            "required": true,
+            "required": false,
+            "conditionallyRequired": true,
+            "dependsOn": { "rawMaterialKnowledge": "yes" },
             "fields": [
               { "key": "sugarcane", "label": "Sugarcane", "placeholder": "0" },
-              { "key": "sugarBeet", "label": "Sugar Beet", "placeholder": "0" },
-              { "key": "dontKnow", "label": "Don't Know", "placeholder": "0" }
+              { "key": "sugarBeet", "label": "Sugar Beet", "placeholder": "0" }
             ]
           },
           {
@@ -212,7 +225,7 @@
             "fields": [
               {
                 "key": "domestic",
-                "label": "Domestically Produced Sugar (from Nigerian refineries/mills)",
+                "label": "Domestically Produced Sugar (from Nigerian refineries)",
                 "type": "number",
                 "placeholder": "0",
                 "unit": "MT"
@@ -276,7 +289,8 @@
               { "value": "health-profile", "label": "To improve health/nutritional profile of products" },
               { "value": "regulations", "label": "Existing or anticipated sugar taxes/regulations" },
               { "value": "functional-properties", "label": "Specific functional properties (e.g., texture, stability)" },
-              { "value": "supply-instability", "label": "Sugar supply chain instability" }
+              { "value": "supply-instability", "label": "Sugar supply chain instability" },
+              { "value": "other", "label": "Other", "hasTextField": true, "textFieldPlaceholder": "Please specify" }
             ]
           },
           {
@@ -294,20 +308,6 @@
               { "year": "2024" },
               { "year": "2023" },
               { "year": "2022" }
-            ]
-          },
-          {
-            "id": "futureAlternativeIntentions",
-            "type": "radio",
-            "label": "What are your company's future intentions regarding the use of sugar alternatives over the next 1-3 years?",
-            "required": true,
-            "options": [
-              { "value": "significantly-increase", "label": "Significantly increase usage" },
-              { "value": "slightly-increase", "label": "Slightly increase usage" },
-              { "value": "maintain", "label": "Maintain current usage levels" },
-              { "value": "slightly-decrease", "label": "Slightly decrease usage" },
-              { "value": "significantly-decrease", "label": "Significantly decrease usage" },
-              { "value": "no-plan", "label": "Do not plan to use (if currently not using)" }
             ]
           }
         ]

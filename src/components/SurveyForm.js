@@ -79,6 +79,9 @@ export default function SurveyForm({
     const sectionData = formData[currentSection] || {};
 
     return currentSectionData.questions.every((question) => {
+      // Skip validation if question shouldn't be rendered
+      if (!shouldRenderQuestion(question, sectionData)) return true;
+
       const shouldBeRequired = isQuestionRequired(question, sectionData);
 
       if (!shouldBeRequired) return true;
@@ -90,6 +93,31 @@ export default function SurveyForm({
         (!Array.isArray(value) || value.length > 0)
       );
     });
+  };
+
+  // Helper function to determine if a question should be rendered
+  const shouldRenderQuestion = (question, sectionData) => {
+    // Always render if no dependency
+    if (!question.dependsOn) return true;
+
+    const dependencyKey = Object.keys(question.dependsOn)[0];
+    const dependencyValue = question.dependsOn[dependencyKey];
+
+    // Check if the dependency is met in current section or across all form data
+    const currentSectionValue = sectionData[dependencyKey];
+    if (currentSectionValue === dependencyValue) return true;
+
+    // Check across all sections for the dependency
+    for (const [sectionId, data] of Object.entries(formData)) {
+      const dependentValue = data[dependencyKey];
+      if (typeof dependentValue === "object" && dependentValue?.value) {
+        if (dependentValue.value === dependencyValue) return true;
+      } else if (dependentValue === dependencyValue) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   // Helper function to determine if a question should be required
@@ -212,19 +240,23 @@ export default function SurveyForm({
 
       {/* Questions */}
       <div className="card space-y-6 sm:space-y-8">
-        {currentSectionData.questions.map((question) => (
-          <QuestionRenderer
-            key={question.id}
-            question={question}
-            value={formData[currentSection]?.[question.id]}
-            onChange={handleAnswerChange}
-            error={errors[question.id]}
-            isRequired={isQuestionRequired(
-              question,
-              formData[currentSection] || {}
-            )}
-          />
-        ))}
+        {currentSectionData.questions
+          .filter((question) =>
+            shouldRenderQuestion(question, formData[currentSection] || {})
+          )
+          .map((question) => (
+            <QuestionRenderer
+              key={question.id}
+              question={question}
+              value={formData[currentSection]?.[question.id]}
+              onChange={handleAnswerChange}
+              error={errors[question.id]}
+              isRequired={isQuestionRequired(
+                question,
+                formData[currentSection] || {}
+              )}
+            />
+          ))}
       </div>
 
       {/* Navigation */}
